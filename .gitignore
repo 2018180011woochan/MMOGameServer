@@ -1,0 +1,23 @@
+# Visual Studio 임시 파일 및 빌드 결과물
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.aps
+*.pdb
+*.log
+
+# 컴파일 결과물
+*.exe
+*.dll
+*.lib
+*.obj
+*.pch
+*.iobj
+*.ipdb
+
+# 기타 쓰레기 파일
+*.tmp
+*.bak
