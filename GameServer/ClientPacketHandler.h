@@ -25,7 +25,7 @@ public:
 	}
 	//static SendBufferRef MakeSendBuffer(S_LOGIN& pkt) { return MakeSendBuffer(pkt, PKT_S_LOGIN); }
 
-private:
+public:
 	template<typename PacketType, typename ProcessFunc>
 	static bool HandlePacket(ProcessFunc func, PacketSessionRef& session, BYTE* buffer, int32 len)
 	{

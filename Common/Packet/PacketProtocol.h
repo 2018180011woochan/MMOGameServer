@@ -9,12 +9,17 @@
 struct PacketHeader
 {
 	uint16 size;
-	uint16 id; // 프로토콜ID (ex. 1=로그인, 2=이동요청)
+	uint16 id; 
 };
 
 struct C_LOGIN
 {
-	uint64 dummyId; // 테스트용 데이터 (예: 카카오톡 고유 ID 등)
+	uint64 dummyId; 
+};
+
+struct S_LOGIN
+{
+	int32 playerId; // 서버가 발급해주는 고유 ID
 };
 
 #pragma pack()
