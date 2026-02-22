@@ -39,6 +39,15 @@ struct S_MOVE
 	float rotY;
 };
 
+struct S_ENTER_GAME
+{
+	int32 playerId;
+	float posX;
+	float posY;
+	float posZ;
+	float rotY;
+};
+
 #pragma pack()
 
 

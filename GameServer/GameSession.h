@@ -14,6 +14,8 @@ public:
 	virtual void OnRecvPacket(BYTE* buffer, int32 len) override;
 	virtual void OnSend(int32 len) override;
 
+	void SetPlayer(PlayerRef player) { _currentPlayer = player; }
+
 public:
-	Vector<PlayerRef> _players;
+	PlayerRef _currentPlayer;
 };
