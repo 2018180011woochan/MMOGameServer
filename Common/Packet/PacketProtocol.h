@@ -48,6 +48,11 @@ struct S_ENTER_GAME
 	float rotY;
 };
 
+struct S_LEAVE_GAME
+{
+	int32 playerId;
+};
+
 #pragma pack()
 
 

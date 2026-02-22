@@ -10,6 +10,7 @@ enum : uint16
 	PKT_S_CHAT = 1005,
 	PKT_C_MOVE = 1006,
 	PKT_S_MOVE = 1007,
+	PKT_S_LEAVE_GAME = 1008,
 };
 
 enum ROOM : uint16
