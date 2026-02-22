@@ -58,7 +58,29 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 
 bool Handle_C_MOVE(PacketSessionRef& session, C_MOVE* pkt)
 {
-	cout << pkt->posX << ", " << pkt->posY << ", " << pkt->posZ << endl;
-	// TODO: 이 좌표를 S_MOVE 패킷으로 재조립해서 같은 맵에 있는 다른 세션들에게 Broadcast 해야 함.
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	player->posX = pkt->posX;
+	player->posY = pkt->posY;
+	player->posZ = pkt->posZ;
+	player->rotY = pkt->rotY;
+
+	S_MOVE sPkt;
+	sPkt.playerId = player->playerId;
+	sPkt.posX = player->posX;
+	sPkt.posY = player->posY;
+	sPkt.posZ = player->posZ;
+	sPkt.rotY = player->rotY;
+
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_MOVE);
+
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room != nullptr)
+	{
+		room->Broadcast(sendBuffer);
+	}
+
 	return true;
 }

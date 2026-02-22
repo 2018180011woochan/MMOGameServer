@@ -15,7 +15,7 @@ public:
 	virtual void OnSend(int32 len) override;
 
 	void SetPlayer(PlayerRef player) { _currentPlayer = player; }
-
+	PlayerRef GetPlayer() { return _currentPlayer; }
 public:
 	PlayerRef _currentPlayer;
 };
