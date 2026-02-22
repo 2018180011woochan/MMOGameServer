@@ -45,7 +45,12 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
 	if (room != nullptr)
 	{
+		cout << player->curRoomID << "번 방을 찾았습니다! 입장(Enter) 진행!" << endl;
 		room->Enter(player);
+	}
+	else
+	{
+		cout << "치명적 에러: " << player->curRoomID << "번 방이 존재하지 않습니다! (nullptr)" << endl;
 	}
 
 	return true;

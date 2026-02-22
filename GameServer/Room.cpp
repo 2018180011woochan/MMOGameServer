@@ -8,6 +8,7 @@ Room GRoom;
 
 void Room::Enter(PlayerRef player)
 {
+	cout << "Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
 	WRITE_LOCK;
 	_players[player->playerId] = player;
 
@@ -18,6 +19,11 @@ void Room::Enter(PlayerRef player)
 	myEnterPkt.posZ = player->posZ;
 	myEnterPkt.rotY = player->rotY;
 	auto myEnterSendBuffer = ClientPacketHandler::MakeSendBuffer(myEnterPkt, PKT_S_ENTER_GAME);
+
+	if (auto mySession = player->ownerSession.lock())
+	{
+		mySession->Send(myEnterSendBuffer);
+	}
 
 	for (auto& pair : _players) {
 		PlayerRef otherPlayer = pair.second;
