@@ -6,12 +6,16 @@
 #include "GameSessionManager.h"
 #include "BufferWriter.h"
 #include "ClientPacketHandler.h"
+#include "RoomManager.h"
 #include <tchar.h>
-//#include "Protocol.pb.h"
 
 int main()
 {
 	ClientPacketHandler::Init();
+
+	RoomManager::Instance().AddRoom(ROOM::ROOM_1, MakeShared<Room>());
+	RoomManager::Instance().AddRoom(ROOM::ROOM_2, MakeShared<Room>());
+	RoomManager::Instance().AddRoom(ROOM::ROOM_3, MakeShared<Room>());
 
 	ServerServiceRef service = MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),

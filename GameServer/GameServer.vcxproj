@@ -187,6 +187,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="ClientPacketHandler.cpp" />
     <ClCompile Include="Room.cpp" />
+    <ClCompile Include="RoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\Packet\PacketEnum.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="ClientPacketHandler.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="RoomManager.h" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Include="..\Common\Protobuf\bin\Enum.proto" />

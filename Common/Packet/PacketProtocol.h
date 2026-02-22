@@ -22,6 +22,23 @@ struct S_LOGIN
 	int32 playerId; // 서버가 발급해주는 고유 ID
 };
 
+struct C_MOVE
+{
+	float posX;
+	float posY;
+	float posZ;
+	float rotY;
+};
+
+struct S_MOVE
+{
+	int32 playerId; // 누가 이동했는지 식별
+	float posX;
+	float posY;
+	float posZ;
+	float rotY;
+};
+
 #pragma pack()
 
 

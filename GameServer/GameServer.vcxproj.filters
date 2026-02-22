@@ -13,6 +13,9 @@
     <Filter Include="GameContents">
       <UniqueIdentifier>{87ecb0c8-a463-4f2f-8da3-49a7bcdfb77a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{ea1b0f13-0904-4d82-8056-183cd5ac7126}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -24,9 +27,6 @@
     <ClCompile Include="GameSession.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="GameSessionManager.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="ClientPacketHandler.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -36,13 +36,16 @@
     <ClCompile Include="Room.cpp">
       <Filter>GameContents</Filter>
     </ClCompile>
+    <ClCompile Include="GameSessionManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSessionManager.h">
-      <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="GameSession.h">
       <Filter>Main</Filter>
@@ -64,6 +67,12 @@
     </ClInclude>
     <ClInclude Include="..\Common\Packet\PacketStruct.h">
       <Filter>Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSessionManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

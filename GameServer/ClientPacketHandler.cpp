@@ -24,6 +24,12 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_LOGIN);
 	session->Send(sendBuffer);
-	cout << "Server Sent S_LOGIN Packet!" << endl;
+	return true;
+}
+
+bool Handle_C_MOVE(PacketSessionRef& session, C_MOVE* pkt)
+{
+
+	// TODO: 이 좌표를 S_MOVE 패킷으로 재조립해서 같은 맵에 있는 다른 세션들에게 Broadcast 해야 함.
 	return true;
 }

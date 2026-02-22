@@ -8,4 +8,13 @@ enum : uint16
 	PKT_S_ENTER_GAME = 1003,
 	PKT_C_CHAT = 1004,
 	PKT_S_CHAT = 1005,
+	PKT_C_MOVE = 1006,
+	PKT_S_MOVE = 1007,
+};
+
+enum ROOM : uint16
+{
+	ROOM_1,
+	ROOM_2,
+	ROOM_3,
 };
