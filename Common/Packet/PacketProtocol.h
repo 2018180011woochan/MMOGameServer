@@ -66,6 +66,16 @@ struct S_STANCE
 	int32 isStance;
 };
 
+struct C_JUMP
+{
+	int32 dummy; // C#과 C++ 구조체 크기를 맞추기 위한 더미 데이터
+};
+
+struct S_JUMP
+{
+	int32 playerId;
+};
+
 #pragma pack()
 
 

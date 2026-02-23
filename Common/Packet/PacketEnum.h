@@ -13,6 +13,8 @@ enum : uint16
 	PKT_S_LEAVE_GAME = 1008,
 	PKT_C_STANCE = 1009,   
 	PKT_S_STANCE = 1010,   
+	PKT_C_JUMP = 1011,  
+	PKT_S_JUMP = 1012,  
 };
 
 enum ROOM : uint16
