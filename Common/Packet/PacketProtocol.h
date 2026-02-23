@@ -76,6 +76,17 @@ struct S_JUMP
 	int32 playerId;
 };
 
+struct C_ATTACK
+{
+	ATTACK_TYPE attackType; // 1, 2, 3 Áß ÇÏ³ª
+};
+
+struct S_ATTACK
+{
+	int32 playerId;
+	ATTACK_TYPE attackType;
+};
+
 #pragma pack()
 
 

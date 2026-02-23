@@ -15,6 +15,8 @@ enum : uint16
 	PKT_S_STANCE = 1010,   
 	PKT_C_JUMP = 1011,  
 	PKT_S_JUMP = 1012,  
+	PKT_C_ATTACK = 1013,
+	PKT_S_ATTACK = 1014,
 };
 
 enum ROOM : uint16
@@ -22,4 +24,12 @@ enum ROOM : uint16
 	ROOM_1,
 	ROOM_2,
 	ROOM_3,
+};
+
+enum ATTACK_TYPE : uint16
+{
+	SLASH1,
+	SLASH2,
+	SLASH3,
+	SKILL,
 };

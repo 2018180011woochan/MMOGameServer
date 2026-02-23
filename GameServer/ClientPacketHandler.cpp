@@ -126,3 +126,24 @@ bool Handle_C_JUMP(PacketSessionRef& session, C_JUMP* pkt)
 
 	return true;
 }
+
+bool Handle_C_ATTACK(PacketSessionRef& session, C_ATTACK* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	S_ATTACK sPkt;
+	sPkt.playerId = player->playerId;
+	sPkt.attackType = pkt->attackType; 
+
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_ATTACK);
+
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room != nullptr)
+	{
+		room->Broadcast(sendBuffer);
+	}
+
+	return true;
+}
