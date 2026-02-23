@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "Room.h"
 #include "Player.h"
+#include "Monster.h"
 #include "GameSession.h"
 #include "ClientPacketHandler.h"
+#include "Room.h"
 #include "../Common/Packet/PacketProtocol.h"
 Room GRoom;
 
@@ -83,6 +85,37 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 		if (auto session = p->ownerSession.lock())
 		{
 			session->Send(sendBuffer);
+		}
+	}
+}
+
+void Room::EnterMonster(MonsterRef monster)
+{
+	WRITE_LOCK;
+	_monsters[monster->monsterId] = monster;
+	monster->roomId = 1;
+	monster->room = shared_from_this();
+}
+
+void Room::LeaveMonster(int32 monsterId)
+{
+	WRITE_LOCK;
+	_monsters.erase(monsterId);
+}
+
+void Room::Update(float deltaTime)
+{
+	WRITE_LOCK;
+
+	if (_players.empty()) return;
+
+	for (auto& pair : _monsters)
+	{
+		MonsterRef monster = pair.second;
+
+		if (monster != nullptr)
+		{
+			monster->Update(deltaTime);
 		}
 	}
 }

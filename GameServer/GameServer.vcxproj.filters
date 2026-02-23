@@ -16,6 +16,9 @@
     <Filter Include="Manager">
       <UniqueIdentifier>{ea1b0f13-0904-4d82-8056-183cd5ac7126}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameContents\Monster">
+      <UniqueIdentifier>{451168ec-14f9-4266-be86-2a3e20993eb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameServer.cpp">
@@ -41,6 +44,12 @@
     </ClCompile>
     <ClCompile Include="RoomManager.cpp">
       <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>GameContents\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Skeleton.cpp">
+      <Filter>GameContents\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="RoomManager.h">
       <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>GameContents\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Skeleton.h">
+      <Filter>GameContents\Monster</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

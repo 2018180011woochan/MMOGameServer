@@ -15,3 +15,15 @@ RoomRef RoomManager::GetRoom(uint16 roomId)
 		return it->second;
 	return nullptr;
 }
+
+void RoomManager::Update(float deltaTime)
+{
+	for (auto& pair : _rooms)
+	{
+		RoomRef room = pair.second;
+		if (room != nullptr)
+		{
+			room->Update(deltaTime);
+		}
+	}
+}

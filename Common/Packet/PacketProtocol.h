@@ -87,6 +87,12 @@ struct S_ATTACK
 	ATTACK_TYPE attackType;
 };
 
+struct S_MONSTER_STATE
+{
+	int32 monsterId;
+	MONSTER_STATE state;
+};
+
 #pragma pack()
 
 
