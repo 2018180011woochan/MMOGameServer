@@ -53,6 +53,17 @@ struct S_LEAVE_GAME
 	int32 playerId;
 };
 
+struct C_STANCE
+{
+	int32 isStance; // 1 ¹ßµµ, 0 ³³µµ
+};
+
+struct S_STANCE
+{
+	int32 playerId;
+	int32 isStance;
+};
+
 #pragma pack()
 
 

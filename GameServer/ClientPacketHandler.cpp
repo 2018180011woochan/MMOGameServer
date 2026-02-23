@@ -84,3 +84,24 @@ bool Handle_C_MOVE(PacketSessionRef& session, C_MOVE* pkt)
 
 	return true;
 }
+
+bool Handle_C_STANCE(PacketSessionRef& session, C_STANCE* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	S_STANCE sPkt;
+	sPkt.playerId = player->playerId;
+	sPkt.isStance = pkt->isStance;
+
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_STANCE);
+
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room != nullptr)
+	{
+		room->Broadcast(sendBuffer);
+	}
+
+	return true;
+}
