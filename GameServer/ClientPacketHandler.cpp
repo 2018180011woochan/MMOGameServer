@@ -73,6 +73,7 @@ bool Handle_C_MOVE(PacketSessionRef& session, C_MOVE* pkt)
 	sPkt.posY = player->posY;
 	sPkt.posZ = player->posZ;
 	sPkt.rotY = player->rotY;
+	sPkt.isRunning = pkt->isRunning;
 
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_MOVE);
 

@@ -28,6 +28,7 @@ struct C_MOVE
 	float posY;
 	float posZ;
 	float rotY;
+	int32 isRunning;
 };
 
 struct S_MOVE
@@ -37,6 +38,7 @@ struct S_MOVE
 	float posY;
 	float posZ;
 	float rotY;
+	int32 isRunning;
 };
 
 struct S_ENTER_GAME
