@@ -55,6 +55,26 @@ void Room::Enter(PlayerRef player)
 			}
 		}
 	}
+
+	for (auto& pair : _monsters)
+	{
+		MonsterRef monster = pair.second;
+
+		S_MONSTER_STATE sPkt;
+		sPkt.monsterId = monster->monsterId;
+		sPkt.state = monster->state; // 몬스터의 현재 상태!
+		sPkt.targetId = monster->targetPlayerId;
+		sPkt.destX = monster->destX;
+		sPkt.destY = monster->destY;
+		sPkt.destZ = monster->destZ;
+
+		auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_MONSTER_STATE);
+
+		if (auto mySession = player->ownerSession.lock())
+		{
+			mySession->Send(sendBuffer);
+		}
+	}
 }
 
 void Room::Leave(PlayerRef player)

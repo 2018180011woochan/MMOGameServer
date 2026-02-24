@@ -21,18 +21,10 @@ Skeleton::~Skeleton()
 
 void Skeleton::ProcessWander(float deltaTime)
 {
-	//int32 nearestPlayerId = 1; 
-	//float distance = 4.0f;     
-
-	//if (distance <= detectionRange)
-	//{
-	//	targetPlayerId = nearestPlayerId;
-	//	ChangeState(STATE_CHASE);
-	//}
-
-	if (stateTimer < 3.0f) return;
-
-	ChangeState(STATE_CHASE);
+	if (stateTimer >= 3.0f)
+	{
+		ChangeState(STATE_IDLE);
+	}
 }
 
 void Skeleton::ProcessConfront(float deltaTime)
@@ -71,29 +63,23 @@ void Skeleton::ProcessRetreat(float deltaTime)
 
 void Skeleton::ProcessChase(float deltaTime)
 {
-	//float distance = 3.0f;
-
-	//if (distance > detectionRange * 1.2f)
-	//{
-	//	targetPlayerId = -1;
-	//	hasConfrontedOnce = false; 
-	//	ChangeState(STATE_WANDER);
-	//	return;
-	//}
-
-	//if (distance <= attackRange)
-	//{
-	//	if (!hasConfrontedOnce)
-	//	{
-	//		ChangeState((MONSTER_STATE)5);
-	//	}
-	//	else
-	//	{
-	//		ChangeState(STATE_ATTACK);
-	//	}
-	//}
-
 	if (stateTimer < 3.0f) return;
 
 	ChangeState(STATE_ATTACK);
+}
+
+void Skeleton::ProcessIdle(float deltaTime)
+{
+	if (stateTimer >= 2.0f)
+	{
+		float angle = (rand() % 360) * 3.14159f / 180.f;
+		float r = (rand() % 100 / 100.f) * wanderRadius;
+
+		this->destX = this->posX + r * cos(angle);
+		this->destY = this->posY; 
+		this->destZ = this->posZ + r * sin(angle);
+		this->targetPlayerId = -1;
+
+		ChangeState(STATE_WANDER);
+	}
 }

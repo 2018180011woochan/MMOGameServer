@@ -9,6 +9,7 @@ public:
 	int32 monsterId;
 	int32 roomId; 
 	float posX = 0.f, posY = 0.f, posZ = 0.f; 
+	float destX = 0.f, destY = 0.f, destZ = 0.f;
 
 	float detectionRange = 10.f;
 	float attackRange = 2.f;

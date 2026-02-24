@@ -21,9 +21,12 @@ public:
 	virtual ~Skeleton();
 
 protected:
+	virtual void ProcessIdle(float deltaTime) override;
 	virtual void ProcessWander(float deltaTime) override;
 	virtual void ProcessConfront(float deltaTime) override;
 	virtual void ProcessRetreat(float deltaTime) override;
 	virtual void ProcessChase(float deltaTime) override;
+
+
 };
 

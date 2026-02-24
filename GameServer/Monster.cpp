@@ -71,6 +71,10 @@ void Monster::ChangeState(MONSTER_STATE newState)
 	S_MONSTER_STATE sPkt;
 	sPkt.monsterId = this->monsterId;
 	sPkt.state = this->state;
+	sPkt.targetId = this->targetPlayerId;
+	sPkt.destX = this->destX;
+	sPkt.destY = this->destY;
+	sPkt.destZ = this->destZ;
 
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_MONSTER_STATE);
 

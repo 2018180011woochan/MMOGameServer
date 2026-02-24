@@ -91,6 +91,12 @@ struct S_MONSTER_STATE
 {
 	int32 monsterId;
 	MONSTER_STATE state;
+
+	int32 targetId = -1;
+
+	float destX = 0.f;
+	float destY = 0.f;
+	float destZ = 0.f;
 };
 
 #pragma pack()
