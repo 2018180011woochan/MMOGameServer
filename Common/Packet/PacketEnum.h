@@ -18,6 +18,8 @@ enum : uint16
 	PKT_C_ATTACK = 1013,
 	PKT_S_ATTACK = 1014,
 	PKT_S_MONSTER_STATE = 1015,
+	PKT_C_DASH = 1016,
+	PKT_S_DASH = 1017,
 };
 
 enum ROOM : uint16

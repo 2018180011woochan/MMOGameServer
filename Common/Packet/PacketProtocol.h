@@ -99,6 +99,16 @@ struct S_MONSTER_STATE
 	float destZ = 0.f;
 };
 
+struct C_DASH
+{
+	int32 dummy;
+};
+
+struct S_DASH
+{
+	int32 playerId;
+};
+
 #pragma pack()
 
 
