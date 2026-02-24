@@ -13,6 +13,9 @@ Skeleton::Skeleton()
 	retreatDuration = 1.5f;
 
 	state = STATE_IDLE;
+
+	this->maxHp = 30.f;
+	this->hp = 30.f;
 }
 
 Skeleton::~Skeleton()

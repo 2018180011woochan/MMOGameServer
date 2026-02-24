@@ -6,7 +6,6 @@
 #include "ClientPacketHandler.h"
 #include "Room.h"
 #include "../Common/Packet/PacketProtocol.h"
-Room GRoom;
 
 void Room::Enter(PlayerRef player)
 {
@@ -138,4 +137,17 @@ void Room::Update(float deltaTime)
 			monster->Update(deltaTime);
 		}
 	}
+}
+
+MonsterRef Room::GetMonster(int32 monsterId)
+{
+	READ_LOCK; 
+
+	auto it = _monsters.find(monsterId);
+	if (it != _monsters.end())
+	{
+		return it->second; 
+	}
+
+	return nullptr; 
 }

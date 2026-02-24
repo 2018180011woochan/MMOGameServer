@@ -12,6 +12,7 @@ bool Handle_C_STANCE(PacketSessionRef& session, C_STANCE* pkt);
 bool Handle_C_JUMP(PacketSessionRef& session, C_JUMP* pkt);
 bool Handle_C_ATTACK(PacketSessionRef& session, C_ATTACK* pkt);
 bool Handle_C_DASH(PacketSessionRef& session, C_DASH* pkt);
+bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt);
 
 class ClientPacketHandler
 {
@@ -26,6 +27,7 @@ public:
 		GPacketHandler[PKT_C_JUMP] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_JUMP>(Handle_C_JUMP, session, buffer, len); };
 		GPacketHandler[PKT_C_ATTACK] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_ATTACK>(Handle_C_ATTACK, session, buffer, len); };
 		GPacketHandler[PKT_C_DASH] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_DASH>(Handle_C_DASH, session, buffer, len); };
+		GPacketHandler[PKT_C_HIT_MONSTER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_HIT_MONSTER>(Handle_C_HIT_MONSTER, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len) 

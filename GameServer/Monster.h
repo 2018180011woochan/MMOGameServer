@@ -15,6 +15,9 @@ public:
 	float attackRange = 2.f;
 	float moveSpeed = 2.f;
 
+	float hp = 100.f;
+	float maxHp = 100.f;
+
 	MONSTER_STATE state = STATE_IDLE;
 	int32 targetPlayerId = -1;
 	float stateTimer = 0.0f;
@@ -35,6 +38,7 @@ protected:
 	virtual void ProcessConfront(float deltaTime) {}
 	virtual void ProcessRetreat(float deltaTime) {}
 
+public:
 	virtual void ChangeState(MONSTER_STATE newState);
 };
 

@@ -109,6 +109,19 @@ struct S_DASH
 	int32 playerId;
 };
 
+struct C_HIT_MONSTER
+{
+	int32 monsterId;
+	float damage;
+};
+
+struct S_HIT_MONSTER
+{
+	int32 monsterId;
+	float damage;
+	float currentHp;
+};
+
 #pragma pack()
 
 

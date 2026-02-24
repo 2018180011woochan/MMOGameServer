@@ -12,6 +12,8 @@ public:
 
 	void Update(float deltaTime);
 
+	MonsterRef GetMonster(int32 monsterId);
+
 private:
 	USE_LOCK;
 	map<uint64, PlayerRef> _players;

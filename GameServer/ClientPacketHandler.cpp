@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ClientPacketHandler.h"
 #include "Player.h"
+#include "Monster.h"
 #include "GameSession.h"
 #include "RoomManager.h"
 
@@ -164,6 +165,35 @@ bool Handle_C_DASH(PacketSessionRef& session, C_DASH* pkt)
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_DASH);
 
 	room->Broadcast(sendBuffer);
+
+	return true;
+}
+
+bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room == nullptr) return false;
+
+	MonsterRef monster = room->GetMonster(pkt->monsterId);
+	if (monster == nullptr || monster->state == STATE_DEAD) return false;
+
+	monster->hp -= pkt->damage;
+	if (monster->hp < 0.f) monster->hp = 0.f;
+
+	S_HIT_MONSTER sPkt;
+	sPkt.monsterId = monster->monsterId;
+	sPkt.damage = pkt->damage;
+	sPkt.currentHp = monster->hp;
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_HIT_MONSTER);
+	room->Broadcast(sendBuffer);
+
+	if (monster->hp <= 0.f)
+	{
+		monster->ChangeState(STATE_DEAD);
+	}
 
 	return true;
 }
