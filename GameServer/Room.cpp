@@ -5,6 +5,8 @@
 #include "GameSession.h"
 #include "ClientPacketHandler.h"
 #include "Room.h"
+#include "Skeleton.h"
+#include "Golem.h"
 #include "../Common/Packet/PacketProtocol.h"
 
 void Room::Enter(PlayerRef player)
@@ -58,6 +60,19 @@ void Room::Enter(PlayerRef player)
 	for (auto& pair : _monsters)
 	{
 		MonsterRef monster = pair.second;
+
+		S_SPAWN_MONSTER spawnPkt;
+		spawnPkt.monsterId = monster->monsterId;
+		spawnPkt.monsterType = monster->type; 
+		spawnPkt.posX = monster->posX;
+		spawnPkt.posY = monster->posY;
+		spawnPkt.posZ = monster->posZ;
+
+		auto spawnBuffer = ClientPacketHandler::MakeSendBuffer(spawnPkt, PKT_S_SPAWN_MONSTER);
+		if (auto mySession = player->ownerSession.lock())
+		{
+			mySession->Send(spawnBuffer);
+		}
 
 		S_MONSTER_STATE sPkt;
 		sPkt.monsterId = monster->monsterId;
@@ -183,4 +198,44 @@ PlayerRef Room::FindNearestPlayer(float x, float y, float z, float range)
 	}
 
 	return nearestPlayer; 
+}
+
+void Room::SpawnMonster(MonsterType type, float x, float y, float z)
+{
+	WRITE_LOCK;
+
+	MonsterRef monster = nullptr;
+	if (type == MONSTER_TYPE_SKELETON) monster = make_shared<Skeleton>();
+	else if (type == MONSTER_TYPE_GOLEM) monster = make_shared<Golem>();
+
+	if (monster == nullptr) return;
+
+	monster->monsterId = _monsterIdGenerator.fetch_add(1); // 100, 101, 102... 겹치지 않게 자동 발급!
+	monster->posX = x;
+	monster->posY = y;
+	monster->posZ = z;
+	monster->roomId = 1;
+	monster->room = shared_from_this();
+
+	_monsters[monster->monsterId] = monster;
+
+	S_SPAWN_MONSTER spawnPkt;
+	spawnPkt.monsterId = monster->monsterId;
+	spawnPkt.monsterType = type;
+	spawnPkt.posX = x;
+	spawnPkt.posY = y;
+	spawnPkt.posZ = z;
+
+	auto spawnBuffer = ClientPacketHandler::MakeSendBuffer(spawnPkt, PKT_S_SPAWN_MONSTER);
+
+	for (auto& pair : _players)
+	{
+		PlayerRef p = pair.second;
+		if (auto session = p->ownerSession.lock())
+		{
+			session->Send(spawnBuffer);
+		}
+	}
+
+	cout << "[서버 스폰] " << monster->monsterId << "번 몬스터(타입:" << type << ") 소환 완료!" << endl;
 }

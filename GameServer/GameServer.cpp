@@ -20,18 +20,10 @@ int main()
 	RoomManager::Instance().AddRoom(ROOM::ROOM_2, MakeShared<Room>());
 	RoomManager::Instance().AddRoom(ROOM::ROOM_3, MakeShared<Room>());
 
-	MonsterRef skeleton = make_shared<Skeleton>();
-	skeleton->monsterId = 100; // 고유 ID 부여
-	skeleton->posX = 60.f;    
-	skeleton->posZ = -5.f;
-	RoomManager::Instance().GetRoom(ROOM::ROOM_1)->EnterMonster(skeleton);
+	RoomRef room1 = RoomManager::Instance().GetRoom(ROOM::ROOM_1);
 
-	MonsterRef golem = make_shared<Golem>();
-	golem->monsterId = 101; 
-	golem->posX = 58.f;
-	golem->posZ = 25.f;
-
-	RoomManager::Instance().GetRoom(ROOM::ROOM_1)->EnterMonster(golem);
+	room1->SpawnMonster(MONSTER_TYPE_SKELETON, 60.f, 0.f, -5.f);
+	room1->SpawnMonster(MONSTER_TYPE_GOLEM, 58.f, 0.f, 25.f);
 
 	ServerServiceRef service = MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),

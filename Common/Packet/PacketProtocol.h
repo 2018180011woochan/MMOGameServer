@@ -138,6 +138,14 @@ struct S_HIT_PLAYER
 	int32 isBlocked; 
 };
 
+struct S_SPAWN_MONSTER
+{
+	int32 monsterId;
+	int32 monsterType;
+	float posX;
+	float posY;
+	float posZ;
+};
 #pragma pack()
 
 
