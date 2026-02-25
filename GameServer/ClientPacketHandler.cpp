@@ -197,3 +197,35 @@ bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 
 	return true;
 }
+
+bool Handle_C_HIT_PLAYER(PacketSessionRef& session, C_HIT_PLAYER* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room == nullptr) return false;
+
+	if (pkt->isBlocked == 0)
+	{
+		player->hp -= pkt->damage;
+		if (player->hp < 0.f) player->hp = 0.f;
+	}
+
+	cout << "[서버 로그] 플레이어 " << player->playerId
+		<< " 피격! 남은 HP: " << player->hp
+		<< " (방어여부: " << pkt->isBlocked << ")" << endl;
+
+	S_HIT_PLAYER sPkt;
+	sPkt.playerId = player->playerId;
+	sPkt.monsterId = pkt->monsterId;
+	sPkt.damage = pkt->damage;
+	sPkt.currentHp = player->hp;
+	sPkt.isBlocked = pkt->isBlocked;
+
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_HIT_PLAYER);
+	room->Broadcast(sendBuffer);
+
+	return true;
+}

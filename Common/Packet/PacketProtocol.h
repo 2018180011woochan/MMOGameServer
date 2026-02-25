@@ -122,6 +122,22 @@ struct S_HIT_MONSTER
 	float currentHp;
 };
 
+struct C_HIT_PLAYER
+{
+	int32 monsterId;
+	float damage;
+	int32 isBlocked; 
+};
+
+struct S_HIT_PLAYER
+{
+	int32 playerId;
+	int32 monsterId;
+	float damage;
+	float currentHp; 
+	int32 isBlocked; 
+};
+
 #pragma pack()
 
 
