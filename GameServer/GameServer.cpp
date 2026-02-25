@@ -9,6 +9,7 @@
 #include "RoomManager.h"
 #include "Monster.h"
 #include "Skeleton.h"
+#include "Golem.h"
 #include <tchar.h>
 
 int main()
@@ -24,6 +25,13 @@ int main()
 	skeleton->posX = 60.f;    
 	skeleton->posZ = -5.f;
 	RoomManager::Instance().GetRoom(ROOM::ROOM_1)->EnterMonster(skeleton);
+
+	MonsterRef golem = make_shared<Golem>();
+	golem->monsterId = 101; 
+	golem->posX = 58.f;
+	golem->posZ = 25.f;
+
+	RoomManager::Instance().GetRoom(ROOM::ROOM_1)->EnterMonster(golem);
 
 	ServerServiceRef service = MakeShared<ServerService>(
 		NetAddress(L"127.0.0.1", 7777),

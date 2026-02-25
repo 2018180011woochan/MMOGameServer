@@ -51,6 +51,9 @@
     <ClCompile Include="Skeleton.cpp">
       <Filter>GameContents\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="Golem.cpp">
+      <Filter>GameContents\Monster</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -87,6 +90,9 @@
       <Filter>GameContents\Monster</Filter>
     </ClInclude>
     <ClInclude Include="Skeleton.h">
+      <Filter>GameContents\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Golem.h">
       <Filter>GameContents\Monster</Filter>
     </ClInclude>
   </ItemGroup>
