@@ -13,6 +13,8 @@ public:
 	void Update(float deltaTime);
 
 	MonsterRef GetMonster(int32 monsterId);
+	PlayerRef GetPlayer(uint64 playerId);
+	PlayerRef FindNearestPlayer(float x, float y, float z, float range);	// 특정 좌표에서 가장 가까운 플레이어를 찾는 함수
 
 private:
 	USE_LOCK;

@@ -151,3 +151,36 @@ MonsterRef Room::GetMonster(int32 monsterId)
 
 	return nullptr; 
 }
+
+PlayerRef Room::GetPlayer(uint64 playerId)
+{
+	READ_LOCK;
+	auto it = _players.find(playerId);
+	if (it != _players.end()) return it->second;
+	return nullptr;
+}
+
+PlayerRef Room::FindNearestPlayer(float x, float y, float z, float range)
+{
+	READ_LOCK;
+	PlayerRef nearestPlayer = nullptr;
+	float minDistance = range; 
+
+	for (auto& pair : _players)
+	{
+		PlayerRef p = pair.second;
+
+		float dx = p->posX - x;
+		float dy = p->posY - y;
+		float dz = p->posZ - z;
+		float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+		if (dist < minDistance)
+		{
+			minDistance = dist;
+			nearestPlayer = p;
+		}
+	}
+
+	return nearestPlayer; 
+}
