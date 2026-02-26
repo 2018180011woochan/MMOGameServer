@@ -39,6 +39,10 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 	player->posZ = -25.58f + randomOffsetZ;
 	player->rotY = 0.0f;
 
+	player->inventory[0] = 1;   
+	player->inventory[1] = 100; 
+	player->inventory[2] = 200;
+
 	// 세션, 플레이어 1:1 연결
 	gameSession->SetPlayer(player);
 	player->ownerSession = gameSession;
@@ -226,6 +230,62 @@ bool Handle_C_HIT_PLAYER(PacketSessionRef& session, C_HIT_PLAYER* pkt)
 
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_HIT_PLAYER);
 	room->Broadcast(sendBuffer);
+
+	return true;
+}
+
+bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room == nullptr) return false;
+
+	int32 slot = pkt->slotIndex;
+
+	if (slot < 0 || slot >= 16) return false;
+
+	int32 itemId = player->inventory[slot];
+	if (itemId == 0) return false; 
+
+	if (itemId == 1)
+	{
+		player->hp += 50.f;
+		if (player->hp > player->maxHp) player->hp = player->maxHp;
+
+		player->inventory[slot] = 0;
+
+		cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << endl;
+
+		// TODO: 클라이언트에게 변경된 HP 패킷 보내기 (S_HIT_PLAYER 재활용 하거나 새로 만들기)
+	}
+	// 검(100) 장착 로직
+	else if (itemId == 100)
+	{
+		// 나중에는 기존에 장착 중인 무기가 있다면 인벤토리 빈칸으로 돌려보내는 로직 추가해야 함
+
+		player->equipWeapon = 100; 
+		player->inventory[slot] = 0; 
+
+		cout << "[서버 로그] 플레이어 " << player->playerId << "가 100번 철검을 장착했습니다!" << endl;
+
+		S_EQUIP_ITEM equipPkt;
+		equipPkt.playerId = player->playerId;
+		equipPkt.equipSlot = 0; 
+		equipPkt.itemId = 100;
+
+		auto equipBuffer = ClientPacketHandler::MakeSendBuffer(equipPkt, PKT_S_EQUIP_ITEM);
+		room->Broadcast(equipBuffer);
+	}
+
+	S_UPDATE_INVEN invenPkt;
+	invenPkt.slotIndex = slot;
+	invenPkt.itemId = player->inventory[slot]; 
+
+	auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
+	session->Send(invenBuffer);
 
 	return true;
 }

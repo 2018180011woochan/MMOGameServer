@@ -146,6 +146,24 @@ struct S_SPAWN_MONSTER
 	float posY;
 	float posZ;
 };
+
+struct C_USE_ITEM
+{
+	int32 slotIndex;
+};
+
+struct S_UPDATE_INVEN
+{
+	int32 slotIndex;
+	int32 itemId;
+};
+
+struct S_EQUIP_ITEM
+{
+	int32 playerId;
+	int32 equipSlot;
+	int32 itemId;
+};
 #pragma pack()
 
 
