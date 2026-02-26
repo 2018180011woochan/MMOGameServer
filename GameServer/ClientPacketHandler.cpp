@@ -43,6 +43,16 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 	player->inventory[1] = 100; 
 	player->inventory[2] = 200;
 
+	for (int i = 0; i < 16; i++)
+	{
+		S_UPDATE_INVEN invenPkt;
+		invenPkt.slotIndex = i;
+		invenPkt.itemId = player->inventory[i]; 
+
+		auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
+		session->Send(invenBuffer); 
+	}
+
 	// 세션, 플레이어 1:1 연결
 	gameSession->SetPlayer(player);
 	player->ownerSession = gameSession;
