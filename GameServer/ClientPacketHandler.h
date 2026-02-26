@@ -15,6 +15,7 @@ bool Handle_C_DASH(PacketSessionRef& session, C_DASH* pkt);
 bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt);
 bool Handle_C_HIT_PLAYER(PacketSessionRef& session, C_HIT_PLAYER* pkt);
 bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt);
+bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt);
 
 class ClientPacketHandler
 {
@@ -32,6 +33,7 @@ public:
 		GPacketHandler[PKT_C_HIT_MONSTER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_HIT_MONSTER>(Handle_C_HIT_MONSTER, session, buffer, len); };
 		GPacketHandler[PKT_C_HIT_PLAYER] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_HIT_PLAYER>(Handle_C_HIT_PLAYER, session, buffer, len); };
 		GPacketHandler[PKT_C_USE_ITEM] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_USE_ITEM>(Handle_C_USE_ITEM, session, buffer, len); };
+		GPacketHandler[PKT_C_PICKUP_ITEM] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_PICKUP_ITEM>(Handle_C_PICKUP_ITEM, session, buffer, len); };
 	}
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len) 

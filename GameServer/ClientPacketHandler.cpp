@@ -299,3 +299,40 @@ bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt)
 
 	return true;
 }
+
+bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	int32 lootedItemId = pkt->itemId;
+
+	int32 emptySlotIndex = -1;
+	for (int i = 0; i < 16; i++)
+	{
+		if (player->inventory[i] == 0)
+		{
+			emptySlotIndex = i;
+			break; 
+		}
+	}
+
+	if (emptySlotIndex == -1)
+	{
+		cout << "[서버 로그] " << player->playerId << "번 유저 가방 꽉 참! 루팅 실패!" << endl;
+		return true; 
+	}
+
+	player->inventory[emptySlotIndex] = lootedItemId;
+	cout << "[서버 로그] " << player->playerId << "번 유저가 " << lootedItemId << "번 아이템을 " << emptySlotIndex << "번 슬롯에 획득!" << endl;
+
+	S_UPDATE_INVEN invenPkt;
+	invenPkt.slotIndex = emptySlotIndex;
+	invenPkt.itemId = lootedItemId;
+
+	auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
+	session->Send(invenBuffer);
+
+	return true;
+}

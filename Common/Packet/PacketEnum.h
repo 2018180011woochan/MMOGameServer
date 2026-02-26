@@ -28,6 +28,7 @@ enum : uint16
 	PKT_C_USE_ITEM = 1023,
 	PKT_S_UPDATE_INVEN = 1024,
 	PKT_S_EQUIP_ITEM = 1025,
+	PKT_C_PICKUP_ITEM = 1026,
 };
 
 enum ROOM : uint16

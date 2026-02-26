@@ -164,6 +164,11 @@ struct S_EQUIP_ITEM
 	int32 equipSlot;
 	int32 itemId;
 };
+
+struct C_PICKUP_ITEM
+{
+	int32 itemId;
+};
 #pragma pack()
 
 
