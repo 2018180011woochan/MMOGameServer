@@ -4,6 +4,7 @@
 #include "Monster.h"
 #include "GameSession.h"
 #include "RoomManager.h"
+#include "DBConnectionPool.h"
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 static std::atomic<int32> GPlayerIdGenerator = 1;
@@ -20,8 +21,27 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 
-	cout << "Client Login Request Received! DummyID: " << pkt->dummyId << endl;
+	cout << "ID: " << pkt->accountName << " / PW: " << pkt->password << endl;
 	int32 newPlayerId = GPlayerIdGenerator.fetch_add(1);
+
+	DBConnection* dbConn = GDBConnectionPool->Pop();
+
+	if (dbConn != nullptr)
+	{
+		WCHAR query[256];
+		::wsprintf(query, L"INSERT INTO account (AccountName, Password) VALUES ('%S', '%S')", pkt->accountName, pkt->password);
+
+		if (dbConn->Execute(query))
+		{
+			cout << "[DB] 계정(account) 장부에 임시 데이터 저장 대성공!!!" << endl;
+		}
+		else
+		{
+			cout << "[DB] 저장 실패... (이미 있는 아이디거나 쿼리 오타)" << endl;
+		}
+
+		GDBConnectionPool->Push(dbConn);
+	}
 
 	S_LOGIN sPkt;
 	sPkt.playerId = newPlayerId;

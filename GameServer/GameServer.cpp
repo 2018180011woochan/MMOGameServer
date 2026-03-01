@@ -10,10 +10,13 @@
 #include "Monster.h"
 #include "Skeleton.h"
 #include "Golem.h"
+#include"DBConnectionPool.h"
 #include <tchar.h>
 
 int main()
 {
+	ASSERT_CRASH(GDBConnectionPool->Connect(4, L"DRIVER={MySQL ODBC 9.6 UNICODE Driver};SERVER=127.0.0.1;PORT=3307;DATABASE=GameDB;UID=root;PWD=1234;"));
+
 	ClientPacketHandler::Init();
 
 	RoomManager::Instance().AddRoom(ROOM::ROOM_1, MakeShared<Room>());

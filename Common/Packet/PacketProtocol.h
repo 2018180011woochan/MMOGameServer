@@ -14,8 +14,9 @@ struct PacketHeader
 
 struct C_LOGIN
 {
-	uint64 dummyId; 
-};
+	char accountName[NICKNAME_SIZE];
+	char password[NICKNAME_SIZE];
+}; 
 
 struct S_LOGIN
 {
