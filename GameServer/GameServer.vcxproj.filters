@@ -54,6 +54,9 @@
     <ClCompile Include="Golem.cpp">
       <Filter>GameContents\Monster</Filter>
     </ClCompile>
+    <ClCompile Include="DBManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -94,6 +97,9 @@
     </ClInclude>
     <ClInclude Include="Golem.h">
       <Filter>GameContents\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="DBManager.h">
+      <Filter>Manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include "GameSession.h"
 #include "RoomManager.h"
 #include "DBConnectionPool.h"
+#include "DBManager.h"
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 static std::atomic<int32> GPlayerIdGenerator = 1;
@@ -20,39 +21,19 @@ bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len)
 bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	cout << "[클라 요청] 로그인 시도 ID: " << pkt->accountName << " / PW: " << pkt->password << endl;
 
-	bool isLoginSuccess = false;
-	int32 newPlayerId = 0;
+	AccountDBData accountData;
 
-	DBConnection* dbConn = GDBConnectionPool->Pop();
-	if (dbConn != nullptr)
-	{
-		WCHAR query[256];
-		::wsprintf(query, L"SELECT AccountId FROM account WHERE AccountName = '%S' AND Password = '%S'", pkt->accountName, pkt->password);
-
-		if (dbConn->Execute(query))
-		{
-			if (dbConn->Fetch())
-			{
-				isLoginSuccess = true;
-			}
-		}
-
-		GDBConnectionPool->Push(dbConn);
-	}
+	bool isLoginSuccess = GDBManager->LoginAccount(pkt->accountName, pkt->password, accountData);
 
 	S_LOGIN sPkt;
 	sPkt.success = isLoginSuccess ? 1 : 0;
 
 	if (isLoginSuccess)
-	{
-		newPlayerId = GPlayerIdGenerator.fetch_add(1);
-		sPkt.playerId = newPlayerId;
-	}
+		sPkt.playerId = accountData.accountId;
 	else
-	{
 		sPkt.playerId = 0;
-	}
 
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_LOGIN);
 	session->Send(sendBuffer);
@@ -63,7 +44,7 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		float randomOffsetZ = ((float)rand() / RAND_MAX) * 4.0f - 2.0f;
 
 		PlayerRef player = MakeShared<Player>();
-		player->playerId = newPlayerId;
+		player->playerId = accountData.accountId;
 		player->curRoomID = ROOM::ROOM_1;
 		player->posX = 59.81f + randomOffsetX;
 		player->posY = -9.0f;
@@ -91,7 +72,12 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		if (room != nullptr)
 		{
 			room->Enter(player);
+			cout << "로그인 성공! " << player->curRoomID << "번 방 입장 완료! (PlayerID: " << player->playerId << ")" << endl;
 		}
+	}
+	else
+	{
+		cout << "로그인 실패! (DB에 없거나 비밀번호가 틀림)" << endl;
 	}
 
 	return true;
