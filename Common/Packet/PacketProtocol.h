@@ -20,6 +20,7 @@ struct C_LOGIN
 
 struct S_LOGIN
 {
+	int32 success;
 	int32 playerId; // 서버가 발급해주는 고유 ID
 };
 

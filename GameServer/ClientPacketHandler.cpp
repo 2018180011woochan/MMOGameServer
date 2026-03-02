@@ -21,71 +21,77 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 {
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 
-	cout << "ID: " << pkt->accountName << " / PW: " << pkt->password << endl;
-	int32 newPlayerId = GPlayerIdGenerator.fetch_add(1);
+	bool isLoginSuccess = false;
+	int32 newPlayerId = 0;
 
 	DBConnection* dbConn = GDBConnectionPool->Pop();
-
 	if (dbConn != nullptr)
 	{
 		WCHAR query[256];
-		::wsprintf(query, L"INSERT INTO account (AccountName, Password) VALUES ('%S', '%S')", pkt->accountName, pkt->password);
+		::wsprintf(query, L"SELECT AccountId FROM account WHERE AccountName = '%S' AND Password = '%S'", pkt->accountName, pkt->password);
 
 		if (dbConn->Execute(query))
 		{
-			cout << "[DB] 계정(account) 장부에 임시 데이터 저장 대성공!!!" << endl;
-		}
-		else
-		{
-			cout << "[DB] 저장 실패... (이미 있는 아이디거나 쿼리 오타)" << endl;
+			if (dbConn->Fetch())
+			{
+				isLoginSuccess = true;
+			}
 		}
 
 		GDBConnectionPool->Push(dbConn);
 	}
 
 	S_LOGIN sPkt;
-	sPkt.playerId = newPlayerId;
-	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_LOGIN);
-	session->Send(sendBuffer);
+	sPkt.success = isLoginSuccess ? 1 : 0;
 
-	float randomOffsetX = ((float)rand() / RAND_MAX) * 4.0f - 2.0f;
-	float randomOffsetZ = ((float)rand() / RAND_MAX) * 4.0f - 2.0f;
-
-	PlayerRef player = MakeShared<Player>();
-	player->playerId = newPlayerId;
-	player->curRoomID = ROOM::ROOM_1; // TODO: 임시로 1번 방 배정, 방id나 위치는 나중에 db에서 가져올것
-	player->posX = 59.81f + randomOffsetX;
-	player->posY = -9.0f;
-	player->posZ = -25.58f + randomOffsetZ;
-	player->rotY = 0.0f;
-
-	player->inventory[0] = 1;   
-	player->inventory[1] = 100; 
-	player->inventory[2] = 200;
-
-	for (int i = 0; i < 16; i++)
+	if (isLoginSuccess)
 	{
-		S_UPDATE_INVEN invenPkt;
-		invenPkt.slotIndex = i;
-		invenPkt.itemId = player->inventory[i]; 
-
-		auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
-		session->Send(invenBuffer); 
-	}
-
-	// 세션, 플레이어 1:1 연결
-	gameSession->SetPlayer(player);
-	player->ownerSession = gameSession;
-
-	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
-	if (room != nullptr)
-	{
-		cout << player->curRoomID << "번 방을 찾았습니다! 입장(Enter) 진행!" << endl;
-		room->Enter(player);
+		newPlayerId = GPlayerIdGenerator.fetch_add(1);
+		sPkt.playerId = newPlayerId;
 	}
 	else
 	{
-		cout << "치명적 에러: " << player->curRoomID << "번 방이 존재하지 않습니다! (nullptr)" << endl;
+		sPkt.playerId = 0;
+	}
+
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_LOGIN);
+	session->Send(sendBuffer);
+
+	if (isLoginSuccess)
+	{
+		float randomOffsetX = ((float)rand() / RAND_MAX) * 4.0f - 2.0f;
+		float randomOffsetZ = ((float)rand() / RAND_MAX) * 4.0f - 2.0f;
+
+		PlayerRef player = MakeShared<Player>();
+		player->playerId = newPlayerId;
+		player->curRoomID = ROOM::ROOM_1;
+		player->posX = 59.81f + randomOffsetX;
+		player->posY = -9.0f;
+		player->posZ = -25.58f + randomOffsetZ;
+		player->rotY = 0.0f;
+
+		player->inventory[0] = 1;
+		player->inventory[1] = 100;
+		player->inventory[2] = 200;
+
+		for (int i = 0; i < 16; i++)
+		{
+			S_UPDATE_INVEN invenPkt;
+			invenPkt.slotIndex = i;
+			invenPkt.itemId = player->inventory[i];
+
+			auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
+			session->Send(invenBuffer);
+		}
+
+		gameSession->SetPlayer(player);
+		player->ownerSession = gameSession;
+
+		RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+		if (room != nullptr)
+		{
+			room->Enter(player);
+		}
 	}
 
 	return true;
