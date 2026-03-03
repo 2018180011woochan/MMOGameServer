@@ -89,6 +89,18 @@ void Room::Enter(PlayerRef player)
 			mySession->Send(sendBuffer);
 		}
 	}
+
+	if (this->isPortalOpened == true)
+	{
+		S_OPEN_PORTAL portalPkt;
+		portalPkt.isOpened = 1;
+		auto portalBuffer = ClientPacketHandler::MakeSendBuffer(portalPkt, PKT_S_OPEN_PORTAL);
+
+		if (auto mySession = player->ownerSession.lock())
+		{
+			mySession->Send(portalBuffer);
+		}
+	}
 }
 
 void Room::Leave(PlayerRef player)

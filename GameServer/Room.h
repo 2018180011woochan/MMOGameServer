@@ -23,4 +23,7 @@ private:
 	map<int32, MonsterRef> _monsters;
 
 	std::atomic<int32> _monsterIdGenerator{ 100 };
+
+public:
+	bool isPortalOpened = false;
 };

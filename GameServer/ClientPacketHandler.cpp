@@ -233,6 +233,18 @@ bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 	if (monster->hp <= 0.f)
 	{
 		monster->ChangeState(STATE_DEAD);
+
+		if (monster->type == MonsterType::MONSTER_TYPE_GOLEM) {
+			room->isPortalOpened = true; 
+
+			S_OPEN_PORTAL portalPkt;
+			portalPkt.isOpened = 1;
+			auto portalBuffer = ClientPacketHandler::MakeSendBuffer(portalPkt, PKT_S_OPEN_PORTAL);
+
+			room->Broadcast(portalBuffer); 
+
+			cout << "[서버 로그] 보스 처치 확인! 방의 포탈을 개방합니다." << endl;
+		}
 	}
 
 	return true;

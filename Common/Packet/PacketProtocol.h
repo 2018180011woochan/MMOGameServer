@@ -171,6 +171,11 @@ struct C_PICKUP_ITEM
 {
 	int32 itemId;
 };
+
+struct S_OPEN_PORTAL
+{
+	int32 isOpened; 
+};
 #pragma pack()
 
 
