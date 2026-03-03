@@ -170,6 +170,12 @@ struct S_EQUIP_ITEM
 struct C_PICKUP_ITEM
 {
 	int32 itemId;
+	int32 droppedMonsterId;
+};
+
+struct S_PICKUP_ITEM
+{
+	int32 droppedMonsterId;
 };
 
 struct S_OPEN_PORTAL

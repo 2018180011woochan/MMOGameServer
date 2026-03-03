@@ -357,6 +357,15 @@ bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
 
 		auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
 		session->Send(invenBuffer);
+
+		RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+		if (room != nullptr)
+		{
+			S_PICKUP_ITEM pickupPkt;
+			pickupPkt.droppedMonsterId = pkt->droppedMonsterId;
+			auto pickupBuffer = ClientPacketHandler::MakeSendBuffer(pickupPkt, PKT_S_PICKUP_ITEM);
+			room->Broadcast(pickupBuffer);
+		}
 	}
 	else
 	{
