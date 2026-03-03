@@ -61,6 +61,9 @@ void Room::Enter(PlayerRef player)
 	{
 		MonsterRef monster = pair.second;
 
+		if (monster->state == STATE_DEAD)
+			continue;
+
 		S_SPAWN_MONSTER spawnPkt;
 		spawnPkt.monsterId = monster->monsterId;
 		spawnPkt.monsterType = monster->type; 
