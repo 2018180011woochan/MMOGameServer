@@ -51,9 +51,23 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		player->posZ = -25.58f + randomOffsetZ;
 		player->rotY = 0.0f;
 
-		player->inventory[0] = 1;
-		player->inventory[1] = 100;
-		player->inventory[2] = 200;
+		for (int i = 0; i < 16; i++)
+		{
+			player->inventory[i] = 0;
+		}
+
+		std::vector<ItemDBData> myItems;
+		if (GDBManager->LoadInventory(player->playerId, myItems))
+		{
+			for (const auto& item : myItems)
+			{
+				if (item.slotIndex >= 0 && item.slotIndex < 16)
+				{
+					player->inventory[item.slotIndex] = item.itemId;
+				}
+			}
+			cout << "[서버 로그] " << player->playerId << "번 유저 인벤토리 로드 완료 (총 " << myItems.size() << "개)" << endl;
+		}
 
 		for (int i = 0; i < 16; i++)
 		{
@@ -72,7 +86,7 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		if (room != nullptr)
 		{
 			room->Enter(player);
-			cout << "로그인 성공! " << player->curRoomID << "번 방 입장 완료! (PlayerID: " << player->playerId << ")" << endl;
+			cout << "[서버 로그] 로그인 성공! 방 입장 완료. (PlayerID: " << player->playerId << ")" << endl;
 		}
 	}
 	else
@@ -266,48 +280,32 @@ bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt)
 	if (room == nullptr) return false;
 
 	int32 slot = pkt->slotIndex;
-
 	if (slot < 0 || slot >= 16) return false;
 
 	int32 itemId = player->inventory[slot];
-	if (itemId == 0) return false; 
+	if (itemId == 0) return false;
 
-	if (itemId == 1)
+	if (GDBManager->DeleteInventoryItem(player->playerId, slot))
 	{
-		player->hp += 50.f;
-		if (player->hp > player->maxHp) player->hp = player->maxHp;
+		if (itemId == 1) // 포션
+		{
+			player->hp += 50.f;
+			if (player->hp > player->maxHp) player->hp = player->maxHp;
+			player->inventory[slot] = 0; 
+			cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << " (DB 삭제 완료)" << endl;
+		}
 
-		player->inventory[slot] = 0;
+		S_UPDATE_INVEN invenPkt;
+		invenPkt.slotIndex = slot;
+		invenPkt.itemId = player->inventory[slot]; 
 
-		cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << endl;
-
-		// TODO: 클라이언트에게 변경된 HP 패킷 보내기 (S_HIT_PLAYER 재활용 하거나 새로 만들기)
+		auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
+		session->Send(invenBuffer);
 	}
-	// 검(100) 장착 로직
-	else if (itemId == 100)
+	else
 	{
-		// 나중에는 기존에 장착 중인 무기가 있다면 인벤토리 빈칸으로 돌려보내는 로직 추가해야 함
-
-		player->equipWeapon = 100; 
-		player->inventory[slot] = 0; 
-
-		cout << "[서버 로그] 플레이어 " << player->playerId << "가 100번 철검을 장착했습니다!" << endl;
-
-		S_EQUIP_ITEM equipPkt;
-		equipPkt.playerId = player->playerId;
-		equipPkt.equipSlot = 0; 
-		equipPkt.itemId = 100;
-
-		auto equipBuffer = ClientPacketHandler::MakeSendBuffer(equipPkt, PKT_S_EQUIP_ITEM);
-		room->Broadcast(equipBuffer);
+		cout << "[서버 로그] DB 삭제 실패! 아이템 사용이 취소되었습니다." << endl;
 	}
-
-	S_UPDATE_INVEN invenPkt;
-	invenPkt.slotIndex = slot;
-	invenPkt.itemId = player->inventory[slot]; 
-
-	auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
-	session->Send(invenBuffer);
 
 	return true;
 }
@@ -336,15 +334,22 @@ bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
 		return true; 
 	}
 
-	player->inventory[emptySlotIndex] = lootedItemId;
-	cout << "[서버 로그] " << player->playerId << "번 유저가 " << lootedItemId << "번 아이템을 " << emptySlotIndex << "번 슬롯에 획득!" << endl;
+	if (GDBManager->InsertInventoryItem(player->playerId, lootedItemId, emptySlotIndex))
+	{
+		player->inventory[emptySlotIndex] = lootedItemId;
+		cout << "[서버 로그] " << player->playerId << "번 유저가 " << lootedItemId << "번 아이템을 " << emptySlotIndex << "번 슬롯에 획득 (DB 기록 완료)!" << endl;
 
-	S_UPDATE_INVEN invenPkt;
-	invenPkt.slotIndex = emptySlotIndex;
-	invenPkt.itemId = lootedItemId;
+		S_UPDATE_INVEN invenPkt;
+		invenPkt.slotIndex = emptySlotIndex;
+		invenPkt.itemId = lootedItemId;
 
-	auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
-	session->Send(invenBuffer);
+		auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
+		session->Send(invenBuffer);
+	}
+	else
+	{
+		cout << "[서버 로그] DB 저장 실패! 아이템 획득이 취소되었습니다." << endl;
+	}
 
 	return true;
 }
