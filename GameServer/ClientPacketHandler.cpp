@@ -384,3 +384,56 @@ bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
 
 	return true;
 }
+
+bool Handle_C_ENTER_PORTAL(PacketSessionRef& session, C_ENTER_PORTAL* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+	if (player == nullptr) return false;
+
+	int32 currentRoomId = player->curRoomID;
+	int32 nextRoomId = ROOM::ROOM_1;
+
+	if (currentRoomId == ROOM::ROOM_1) nextRoomId = ROOM::ROOM_2; 
+	else if (currentRoomId == ROOM::ROOM_2) nextRoomId = ROOM::ROOM_3; 
+	else return false;
+
+	RoomRef oldRoom = RoomManager::Instance().GetRoom(currentRoomId);
+	RoomRef newRoom = RoomManager::Instance().GetRoom(nextRoomId);
+
+	if (oldRoom == nullptr || newRoom == nullptr)
+	{
+		cout << "[서버 오류] 이동할 룸이 존재하지 않습니다!" << endl;
+		return false;
+	}
+
+	oldRoom->Leave(player);
+
+	player->curRoomID = nextRoomId;
+	float randomOffsetX = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+	float randomOffsetZ = ((float)rand() / RAND_MAX) * 2.0f - 1.0f;
+
+	if (nextRoomId == ROOM::ROOM_2)
+	{
+		player->posX = 1.24f + randomOffsetX;
+		player->posY = 0.0f;
+		player->posZ = 18.83f + randomOffsetZ;
+	}
+	else if (nextRoomId == ROOM::ROOM_3) 
+	{
+		player->posX = 7.39f + randomOffsetX;
+		player->posY = 0.0f;
+		player->posZ = 13.6f + randomOffsetZ;
+	}
+
+	S_ENTER_PORTAL scenePkt;
+	scenePkt.destRoomId = nextRoomId;
+	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(scenePkt, PKT_S_ENTER_PORTAL);
+	session->Send(sendBuffer);
+
+	newRoom->Enter(player);
+
+	cout << "[서버 로그] " << player->playerId << "번 유저가 " << nextRoomId << "번 룸으로 이동 완료!" << endl;
+
+	return true;
+}

@@ -191,6 +191,16 @@ struct S_SPAWN_ITEM
 	float posY;
 	float posZ;
 };
+
+struct C_ENTER_PORTAL
+{
+	int32 dummy;
+};
+
+struct S_ENTER_PORTAL
+{
+	int32 destRoomId;
+};
 #pragma pack()
 
 

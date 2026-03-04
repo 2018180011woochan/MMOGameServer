@@ -32,13 +32,15 @@ enum : uint16
 	PKT_S_PICKUP_ITEM = 1027,
 	PKT_S_OPEN_PORTAL = 1028,
 	PKT_S_SPAWN_ITEM = 1029,
+	PKT_C_ENTER_PORTAL = 1030,
+	PKT_S_ENTER_PORTAL = 1031,
 };
 
 enum ROOM : uint16
 {
-	ROOM_1,
-	ROOM_2,
-	ROOM_3,
+	ROOM_1 = 1,
+	ROOM_2 = 2,
+	ROOM_3 = 3,
 };
 
 enum ATTACK_TYPE : uint16
