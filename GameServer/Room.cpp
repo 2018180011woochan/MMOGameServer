@@ -175,12 +175,18 @@ void Room::Update(float deltaTime)
 	if (_players.empty()) return;
 
 	for (auto& pair : _monsters)
-	{
-		MonsterRef monster = pair.second;
+		pair.second->Update(deltaTime);
 
-		if (monster != nullptr)
+	if (this->roomId == ROOM::ROOM_2)
+	{
+		if (ghostSpawnedCount == 0)
 		{
-			monster->Update(deltaTime);
+			for (int i = 0; i < 5; i++)
+			{
+				SpawnRandomGhost();
+				ghostSpawnedCount++;
+			}
+			cout << "[서버 로그] 보스씬1 고스트 5마리 최초 스폰 완료!" << endl;
 		}
 	}
 }
@@ -238,14 +244,16 @@ void Room::SpawnMonster(MonsterType type, float x, float y, float z)
 	MonsterRef monster = nullptr;
 	if (type == MONSTER_TYPE_SKELETON) monster = make_shared<Skeleton>();
 	else if (type == MONSTER_TYPE_GOLEM) monster = make_shared<Golem>();
+	else monster = make_shared<Monster>();
 
 	if (monster == nullptr) return;
 
 	monster->monsterId = _monsterIdGenerator.fetch_add(1); // 100, 101, 102... 겹치지 않게 자동 발급!
+	monster->type = type;
 	monster->posX = x;
 	monster->posY = y;
 	monster->posZ = z;
-	monster->roomId = 1;
+	monster->roomId = this->roomId;
 	monster->room = shared_from_this();
 
 	_monsters[monster->monsterId] = monster;
@@ -269,4 +277,12 @@ void Room::SpawnMonster(MonsterType type, float x, float y, float z)
 	}
 
 	cout << "[서버 스폰] " << monster->monsterId << "번 몬스터(타입:" << type << ") 소환 완료!" << endl;
+}
+
+void Room::SpawnRandomGhost()
+{
+	float randomX = -14.0f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 32.0f));
+	float randomZ = -25.0f + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / 31.0f));
+
+	SpawnMonster(MonsterType::MONSTER_TYPE_GHOST, randomX, 0.0f, randomZ);
 }

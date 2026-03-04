@@ -29,6 +29,7 @@ public:
 	PlayerRef FindNearestPlayer(float x, float y, float z, float range);	// 특정 좌표에서 가장 가까운 플레이어를 찾는 함수
 
 	void SpawnMonster(MonsterType type, float x, float y, float z);
+	void SpawnRandomGhost();
 private:
 	USE_LOCK;
 	map<uint64, PlayerRef> _players;
@@ -37,6 +38,11 @@ private:
 
 	std::atomic<int32> _monsterIdGenerator{ 100 };
 
+	// ghost
+	int32 ghostSpawnedCount = 0;
+	
+
 public:
+	int32 roomId = 0;
 	bool isPortalOpened = false;
 };

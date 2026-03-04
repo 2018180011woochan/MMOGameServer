@@ -19,11 +19,19 @@ int main()
 
 	ClientPacketHandler::Init();
 
-	RoomManager::Instance().AddRoom(ROOM::ROOM_1, MakeShared<Room>());
-	RoomManager::Instance().AddRoom(ROOM::ROOM_2, MakeShared<Room>());
-	RoomManager::Instance().AddRoom(ROOM::ROOM_3, MakeShared<Room>());
+	RoomRef room1 = MakeShared<Room>();
+	room1->roomId = ROOM::ROOM_1;
+	RoomManager::Instance().AddRoom(ROOM::ROOM_1, room1);
 
-	RoomRef room1 = RoomManager::Instance().GetRoom(ROOM::ROOM_1);
+	RoomRef room2 = MakeShared<Room>();
+	room2->roomId = ROOM::ROOM_2;
+	RoomManager::Instance().AddRoom(ROOM::ROOM_2, room2);
+
+	RoomRef room3 = MakeShared<Room>();
+	room3->roomId = ROOM::ROOM_3;
+	RoomManager::Instance().AddRoom(ROOM::ROOM_3, room3);
+
+	room1 = RoomManager::Instance().GetRoom(ROOM::ROOM_1);
 
 	room1->SpawnMonster(MONSTER_TYPE_SKELETON, 60.f, 0.f, -5.f);
 	room1->SpawnMonster(MONSTER_TYPE_GOLEM, 58.f, 0.f, 25.f);
