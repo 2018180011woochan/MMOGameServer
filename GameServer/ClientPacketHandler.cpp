@@ -6,6 +6,7 @@
 #include "RoomManager.h"
 #include "DBConnectionPool.h"
 #include "DBManager.h"
+#include "Room.h"
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
 static std::atomic<int32> GPlayerIdGenerator = 1;
@@ -234,6 +235,13 @@ bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 	{
 		monster->ChangeState(STATE_DEAD);
 
+		DroppedItem item;
+		item.itemId = ITEM::ITEM_POTION;
+		item.posX = monster->posX;
+		item.posY = monster->posY;
+		item.posZ = monster->posZ;
+		room->SetDropItem(monster->monsterId, item);
+
 		if (monster->type == MonsterType::MONSTER_TYPE_GOLEM) {
 			room->isPortalOpened = true; 
 
@@ -361,6 +369,8 @@ bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
 		RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
 		if (room != nullptr)
 		{
+			room->RemoveDropItem(pkt->droppedMonsterId);
+
 			S_PICKUP_ITEM pickupPkt;
 			pickupPkt.droppedMonsterId = pkt->droppedMonsterId;
 			auto pickupBuffer = ClientPacketHandler::MakeSendBuffer(pickupPkt, PKT_S_PICKUP_ITEM);

@@ -93,6 +93,22 @@ void Room::Enter(PlayerRef player)
 		}
 	}
 
+	for (auto& pair : _droppedItems)
+	{
+		S_SPAWN_ITEM itemPkt;
+		itemPkt.droppedMonsterId = pair.first; 
+		itemPkt.itemId = pair.second.itemId;
+		itemPkt.posX = pair.second.posX;
+		itemPkt.posY = pair.second.posY;
+		itemPkt.posZ = pair.second.posZ;
+
+		auto itemBuffer = ClientPacketHandler::MakeSendBuffer(itemPkt, PKT_S_SPAWN_ITEM);
+		if (auto mySession = player->ownerSession.lock())
+		{
+			mySession->Send(itemBuffer);
+		}
+	}
+
 	if (this->isPortalOpened == true)
 	{
 		S_OPEN_PORTAL portalPkt;

@@ -182,6 +182,15 @@ struct S_OPEN_PORTAL
 {
 	int32 isOpened; 
 };
+
+struct S_SPAWN_ITEM
+{
+	int32 itemId;
+	int32 droppedMonsterId;
+	float posX;
+	float posY;
+	float posZ;
+};
 #pragma pack()
 
 

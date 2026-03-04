@@ -31,6 +31,7 @@ enum : uint16
 	PKT_C_PICKUP_ITEM = 1026,
 	PKT_S_PICKUP_ITEM = 1027,
 	PKT_S_OPEN_PORTAL = 1028,
+	PKT_S_SPAWN_ITEM = 1029,
 };
 
 enum ROOM : uint16
@@ -68,4 +69,9 @@ enum MonsterType : uint16
 	MONSTER_TYPE_NECROMANCER = 4,
 	MONSTER_TYPE_ZOMBIE = 5,
 	MONSTER_TYPE_GHOST = 6,
+};
+
+enum ITEM : uint16
+{
+	ITEM_POTION = 0,
 };
