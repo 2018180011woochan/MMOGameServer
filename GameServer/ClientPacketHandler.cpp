@@ -46,10 +46,20 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 
 		PlayerRef player = MakeShared<Player>();
 		player->playerId = accountData.accountId;
-		player->curRoomID = ROOM::ROOM_1;
-		player->posX = 59.81f + randomOffsetX;
-		player->posY = -9.0f;
-		player->posZ = -25.58f + randomOffsetZ;
+		// =======================================================
+		// [테스트용] MainScene 스폰
+		// player->curRoomID = ROOM::ROOM_1; 
+		// player->posX = 59.81f + randomOffsetX;
+		// player->posY = -9.0f;
+		// player->posZ = -25.58f + randomOffsetZ;
+
+		// [테스트용] BossScene1 다이렉트 스폰
+		player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
+		player->posX = 1.24f + randomOffsetX;
+		player->posY = 0.0f;
+		player->posZ = 18.83f + randomOffsetZ;
+		// =======================================================
+
 		player->rotY = 0.0f;
 
 		for (int i = 0; i < 16; i++)
