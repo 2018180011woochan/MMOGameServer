@@ -7,6 +7,7 @@
 #include "Room.h"
 #include "Skeleton.h"
 #include "Golem.h"
+#include "Ghost.h"
 #include "../Common/Packet/PacketProtocol.h"
 
 void Room::Enter(PlayerRef player)
@@ -244,11 +245,12 @@ void Room::SpawnMonster(MonsterType type, float x, float y, float z)
 	MonsterRef monster = nullptr;
 	if (type == MONSTER_TYPE_SKELETON) monster = make_shared<Skeleton>();
 	else if (type == MONSTER_TYPE_GOLEM) monster = make_shared<Golem>();
+	else if (type == MONSTER_TYPE_GHOST) monster = make_shared<Ghost>();
 	else monster = make_shared<Monster>();
 
 	if (monster == nullptr) return;
 
-	monster->monsterId = _monsterIdGenerator.fetch_add(1); // 100, 101, 102... 겹치지 않게 자동 발급!
+	monster->monsterId = _monsterIdGenerator.fetch_add(1); 
 	monster->type = type;
 	monster->posX = x;
 	monster->posY = y;
