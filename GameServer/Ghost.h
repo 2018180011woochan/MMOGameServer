@@ -35,4 +35,6 @@ private:
 	// 텔레포트 쿨타임 관련
 	float _lastTeleportTime = -999.f;
 	float _teleportCooldown = 1.5f;
+
+	float _attackTimer = 0.0f;
 };
