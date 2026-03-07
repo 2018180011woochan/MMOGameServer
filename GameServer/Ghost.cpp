@@ -23,6 +23,50 @@ void Ghost::Update(float deltaTime)
 	RoomRef roomRef = room.lock();
 	if (roomRef == nullptr) return;
 
+	if (_teleportCooldownTimer > 0.0f)
+	{
+		_teleportCooldownTimer -= deltaTime;
+	}
+
+	if (_isTeleportPending)
+	{
+		_teleportDelayTimer -= deltaTime;
+		if (_teleportDelayTimer <= 0.0f)
+		{
+			_isTeleportPending = false;
+			_teleportCooldownTimer = 1.5f;
+
+			PlayerRef target = roomRef->FindNearestPlayer(posX, posY, posZ, 12.0f);
+			if (target != nullptr)
+			{
+				float angle = ((float)rand() / RAND_MAX) * 3.141592f * 2.0f;
+				posX = target->posX + cos(angle) * 6.0f;
+				posZ = target->posZ + sin(angle) * 6.0f;
+			}
+			else
+			{
+				float angle = ((float)rand() / RAND_MAX) * 3.141592f * 2.0f;
+				posX += cos(angle) * 6.0f;
+				posZ += sin(angle) * 6.0f;
+			}
+
+			_attackTimer = 0.0f;
+
+			S_MONSTER_STATE statePkt;
+			statePkt.monsterId = monsterId;
+			statePkt.state = (MONSTER_STATE)4;
+			statePkt.targetId = target != nullptr ? target->playerId : -1;
+			statePkt.destX = posX;
+			statePkt.destY = posY;
+			statePkt.destZ = posZ;
+
+			auto sendBuffer = ClientPacketHandler::MakeSendBuffer(statePkt, PKT_S_MONSTER_STATE);
+			roomRef->Broadcast(sendBuffer);
+		}
+
+		return;
+	}
+
 	PlayerRef target = roomRef->FindNearestPlayer(posX, posY, posZ, 12.0f);
 
 	if (target != nullptr)
@@ -108,4 +152,9 @@ void Ghost::Update(float deltaTime)
 
 void Ghost::OnDamaged(float damage)
 {
+	if (_teleportCooldownTimer <= 0.0f && _isTeleportPending == false)
+	{
+		_isTeleportPending = true;
+		_teleportDelayTimer = 1.0f;
+	}
 }
