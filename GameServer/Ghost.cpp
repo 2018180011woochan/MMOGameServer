@@ -1,82 +1,40 @@
 #include "pch.h"
 #include "Ghost.h"
 #include "Room.h"
-#include "Player.h"
 #include "ClientPacketHandler.h"
 #include "../Common/Packet/PacketProtocol.h"
 
 Ghost::Ghost()
 {
-	hp = 20.f;
-	maxHp = 20.f;
+	this->type = MONSTER_TYPE_NONE;
+	this->maxHp = 20.f;
+	this->hp = 20.f;
+
+	detectionRange = 6.0f;
+	attackRange = 6.0f;
+
+	chaseSpeed = 2.0f;
+	wanderSpeed = 2.0f;
 	moveSpeed = 2.0f;
-	_attackTimer = 0.0f;
-	_wanderTimer = 0.0f;
+
+	wanderRadius = 5.0f;
+	wanderInterval = 3.0f;
+
+	attackDelay = 3.0f;
+	attackCooldown = 3.0f;
+	currentCooldown = 0.f;
+
+	state = STATE_IDLE;
 }
 
 Ghost::~Ghost()
 {
 }
 
-void Ghost::Update(float deltaTime)
-{
-	if (hp <= 0.0f) return;
-
-	RoomRef roomRef = room.lock();
-	if (roomRef == nullptr) return;
-
-	if (_attackTimer > 0.0f) _attackTimer -= deltaTime;
-	if (_wanderTimer > 0.0f) _wanderTimer -= deltaTime;
-
-	PlayerRef target = roomRef->FindNearestPlayer(posX, posY, posZ, 6.0f);
-
-	if (target != nullptr)
-	{
-		if (_attackTimer <= 0.0f)
-		{
-			_attackTimer = 3.0f;
-
-			S_MONSTER_STATE statePkt;
-			statePkt.monsterId = monsterId;
-			statePkt.state = MONSTER_STATE::STATE_ATTACK;
-			statePkt.targetId = target->playerId;
-			statePkt.destX = target->posX;
-			statePkt.destY = target->posY;
-			statePkt.destZ = target->posZ;
-
-			auto sendBuffer = ClientPacketHandler::MakeSendBuffer(statePkt, PKT_S_MONSTER_STATE);
-			roomRef->Broadcast(sendBuffer);
-		}
-	}
-	else
-	{
-		_attackTimer = 0.0f;
-
-		if (_wanderTimer <= 0.0f)
-		{
-			_wanderTimer = 3.0f;
-
-			float angle = (rand() % 360) * (3.141592f / 180.0f);
-			posX += cos(angle) * 5.0f;
-			posZ += sin(angle) * 5.0f;
-
-			S_MONSTER_STATE statePkt;
-			statePkt.monsterId = monsterId;
-			statePkt.state = MONSTER_STATE::STATE_WANDER;
-			statePkt.targetId = -1;
-			statePkt.destX = posX;
-			statePkt.destY = posY;
-			statePkt.destZ = posZ;
-
-			auto sendBuffer = ClientPacketHandler::MakeSendBuffer(statePkt, PKT_S_MONSTER_STATE);
-			roomRef->Broadcast(sendBuffer);
-		}
-	}
-}
-
 void Ghost::OnDamaged(float damage)
 {
 	if (hp <= 0.0f) return;
+
 	float angle = (rand() % 360) * (3.141592f / 180.0f);
 	posX += cos(angle) * 2.0f;
 	posZ += sin(angle) * 2.0f;

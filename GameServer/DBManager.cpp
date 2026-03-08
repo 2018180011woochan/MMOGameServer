@@ -57,7 +57,8 @@ bool DBManager::DeleteInventoryItem(int32 accountId, int32 slotIndex)
 		return false;
 
 	WCHAR query[256];
-	::swprintf_s(query, 256, L"DELETE FROM inventory WHERE account_id = %d AND slot_index = %d", accountId, slotIndex);
+	::swprintf_s(query, 256,
+	L"DELETE FROM inventory WHERE account_id = %d AND slot_index = %d", accountId, slotIndex);
 
 	DBBind<0, 0> dbBind(*dbcon, query);
 	bool isSuccess = dbBind.Execute();

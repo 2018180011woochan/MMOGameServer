@@ -3,6 +3,8 @@
 #include "ClientPacketHandler.h"
 #include "RoomManager.h"
 #include "../Common/Packet/PacketProtocol.h"
+#include "Room.h"
+#include "Player.h"
 
 Monster::Monster()
 {
@@ -15,6 +17,10 @@ Monster::~Monster()
 void Monster::Update(float deltaTime)
 {
 	if (hp <= 0.0f || state == STATE_DEAD) return;
+
+	if (currentCooldown > 0.f)
+		currentCooldown -= deltaTime;
+
 	stateTimer += deltaTime;
 
 	switch (state)
@@ -27,33 +33,117 @@ void Monster::Update(float deltaTime)
 	}
 }
 
+void Monster::OnDamaged(float damage)
+{
+}
+
 void Monster::ProcessIdle(float deltaTime)
 {
+	if (RoomRef myRoom = room.lock())
+	{
+		PlayerRef target = myRoom->FindNearestPlayer(posX, posY, posZ, detectionRange);
+		if (target != nullptr)
+		{
+			this->targetPlayerId = target->playerId;
+			ChangeState(STATE_CHASE);
+			return;
+		}
+	}
+
 	if (stateTimer >= 2.0f)
 	{
+		float angle = (rand() % 360) * 3.14159f / 180.f;
+		float r = (rand() % 100 / 100.f) * wanderRadius;
+
+		this->destX = this->posX + r * cos(angle);
+		this->destY = this->posY;
+		this->destZ = this->posZ + r * sin(angle);
+		this->targetPlayerId = -1;
+
 		ChangeState(STATE_WANDER);
+	}
+}
+
+void Monster::ProcessWander(float deltaTime)
+{
+	if (RoomRef myRoom = room.lock())
+	{
+		PlayerRef target = myRoom->FindNearestPlayer(posX, posY, posZ, detectionRange);
+		if (target != nullptr)
+		{
+			this->targetPlayerId = target->playerId;
+			ChangeState(STATE_CHASE);
+			return;
+		}
+	}
+
+	float dx = destX - posX;
+	float dz = destZ - posZ;
+	float dist = std::sqrt(dx * dx + dz * dz);
+
+	if (dist > 0.1f)
+	{
+		posX += (dx / dist) * wanderSpeed * deltaTime;
+		posZ += (dz / dist) * wanderSpeed * deltaTime;
+	}
+
+	if (stateTimer >= wanderInterval)
+	{
+		ChangeState(STATE_IDLE);
 	}
 }
 
 void Monster::ProcessChase(float deltaTime)
 {
-	float distance = 5.0f; // TODO : 임시 거리 
+	RoomRef myRoom = room.lock();
+	if (myRoom == nullptr) return;
 
-	if (distance <= attackRange)
+	PlayerRef target = myRoom->GetPlayer(targetPlayerId);
+
+	if (target == nullptr)
 	{
-		ChangeState(STATE_ATTACK);
+		targetPlayerId = -1;
+		ChangeState(STATE_IDLE);
+		return;
 	}
-	else if (distance > detectionRange * 1.2f)
+
+	float dx = target->posX - posX;
+	float dy = target->posY - posY;
+	float dz = target->posZ - posZ;
+	float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+	if (dist <= attackRange)
 	{
-		targetPlayerId = -1; 
-		ChangeState(STATE_WANDER);
+		if (currentCooldown <= 0.f)
+		{
+			this->destX = target->posX;
+			this->destY = target->posY;
+			this->destZ = target->posZ;
+
+			ChangeState(STATE_ATTACK);
+		}
+		return;
+	}
+
+	if (dist > detectionRange * 1.5f)
+	{
+		targetPlayerId = -1;
+		ChangeState(STATE_IDLE);
+		return;
+	}
+
+	if (dist > 0.0f)
+	{
+		posX += (dx / dist) * chaseSpeed * deltaTime;
+		posZ += (dz / dist) * chaseSpeed * deltaTime;
 	}
 }
 
 void Monster::ProcessAttack(float deltaTime)
 {
-	if (stateTimer >= 1.5f)
+	if (stateTimer >= attackDelay)
 	{
+		currentCooldown = attackCooldown;
 		ChangeState(STATE_CHASE);
 	}
 }
