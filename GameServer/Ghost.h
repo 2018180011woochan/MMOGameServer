@@ -15,8 +15,7 @@ public:
 	virtual ~Ghost();
 
 	virtual void Update(float deltaTime) override;
-
-	void OnDamaged(float damage);
+	virtual void OnDamaged(float damage) override;
 
 private:
 	GhostState _ghostState = GhostState::WANDER;

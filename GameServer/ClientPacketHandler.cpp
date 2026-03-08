@@ -48,16 +48,16 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		player->playerId = accountData.accountId;
 		// =======================================================
 		// [테스트용] MainScene 스폰
-		 player->curRoomID = ROOM::ROOM_1; 
-		 player->posX = 59.81f + randomOffsetX;
-		 player->posY = -9.0f;
-		 player->posZ = -25.58f + randomOffsetZ;
+		 //player->curRoomID = ROOM::ROOM_1; 
+		 //player->posX = 59.81f + randomOffsetX;
+		 //player->posY = -9.0f;
+		 //player->posZ = -25.58f + randomOffsetZ;
 
 		// [테스트용] BossScene1 다이렉트 스폰
-		//player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
-		//player->posX = 1.24f + randomOffsetX;
-		//player->posY = 0.0f;
-		//player->posZ = 18.83f + randomOffsetZ;
+		player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
+		player->posX = 1.24f + randomOffsetX;
+		player->posY = 0.0f;
+		player->posZ = 18.83f + randomOffsetZ;
 		// =======================================================
 
 		player->rotY = 0.0f;
@@ -222,6 +222,7 @@ bool Handle_C_DASH(PacketSessionRef& session, C_DASH* pkt)
 
 bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 {
+	cout << "[서버 수신 로그] 클라가 " << pkt->monsterId << "번 몬스터를 때렸다는 패킷 도착!" << endl;
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 	PlayerRef player = gameSession->GetPlayer();
 	if (player == nullptr) return false;
@@ -233,6 +234,8 @@ bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 
 	monster->hp -= pkt->damage;
 	if (monster->hp < 0.f) monster->hp = 0.f;
+
+	monster->OnDamaged(pkt->damage);
 
 	S_HIT_MONSTER sPkt;
 	sPkt.monsterId = monster->monsterId;

@@ -26,6 +26,7 @@ public:
 	weak_ptr<Room> room;
 
 	virtual void Update(float deltaTime);
+	virtual void OnDamaged(float damage) {}
 
 protected:
 	// 공통 로직
