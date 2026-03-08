@@ -48,16 +48,16 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		player->playerId = accountData.accountId;
 		// =======================================================
 		// [테스트용] MainScene 스폰
-		// player->curRoomID = ROOM::ROOM_1; 
-		// player->posX = 59.81f + randomOffsetX;
-		// player->posY = -9.0f;
-		// player->posZ = -25.58f + randomOffsetZ;
+		 player->curRoomID = ROOM::ROOM_1; 
+		 player->posX = 59.81f + randomOffsetX;
+		 player->posY = -9.0f;
+		 player->posZ = -25.58f + randomOffsetZ;
 
 		// [테스트용] BossScene1 다이렉트 스폰
-		player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
-		player->posX = 1.24f + randomOffsetX;
-		player->posY = 0.0f;
-		player->posZ = 18.83f + randomOffsetZ;
+		//player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
+		//player->posX = 1.24f + randomOffsetX;
+		//player->posY = 0.0f;
+		//player->posZ = 18.83f + randomOffsetZ;
 		// =======================================================
 
 		player->rotY = 0.0f;
@@ -284,8 +284,7 @@ bool Handle_C_HIT_PLAYER(PacketSessionRef& session, C_HIT_PLAYER* pkt)
 	}
 
 	cout << "[서버 로그] 플레이어 " << player->playerId
-		<< " 피격! 남은 HP: " << player->hp
-		<< " (방어여부: " << pkt->isBlocked << ")" << endl;
+		<< " 피격! 남은 HP: " << player->hp << endl;
 
 	S_HIT_PLAYER sPkt;
 	sPkt.playerId = player->playerId;
@@ -322,7 +321,7 @@ bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt)
 			player->hp += 50.f;
 			if (player->hp > player->maxHp) player->hp = player->maxHp;
 			player->inventory[slot] = 0; 
-			cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << " (DB 삭제 완료)" << endl;
+			cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << endl;
 		}
 
 		S_UPDATE_INVEN invenPkt;
@@ -367,7 +366,7 @@ bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
 	if (GDBManager->InsertInventoryItem(player->playerId, lootedItemId, emptySlotIndex))
 	{
 		player->inventory[emptySlotIndex] = lootedItemId;
-		cout << "[서버 로그] " << player->playerId << "번 유저가 " << lootedItemId << "번 아이템을 " << emptySlotIndex << "번 슬롯에 획득 (DB 기록 완료)!" << endl;
+		cout << "[서버 로그] " << player->playerId << "번 유저가 " << lootedItemId << "번 아이템을 " << emptySlotIndex << "번 슬롯에 획득" << endl;
 
 		S_UPDATE_INVEN invenPkt;
 		invenPkt.slotIndex = emptySlotIndex;
