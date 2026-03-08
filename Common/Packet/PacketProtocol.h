@@ -154,6 +154,13 @@ struct C_USE_ITEM
 	int32 slotIndex;
 };
 
+struct S_USE_ITEM
+{
+	int32 playerId;
+	int32 itemId;
+	float currentHp;
+};
+
 struct S_UPDATE_INVEN
 {
 	int32 slotIndex;

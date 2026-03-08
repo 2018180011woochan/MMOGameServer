@@ -14,6 +14,7 @@ Monster::~Monster()
 
 void Monster::Update(float deltaTime)
 {
+	if (hp <= 0.0f || state == STATE_DEAD) return;
 	stateTimer += deltaTime;
 
 	switch (state)
@@ -63,6 +64,7 @@ void Monster::ProcessDead(float deltaTime)
 
 void Monster::ChangeState(MONSTER_STATE newState)
 {
+	if (state == STATE_DEAD) return;
 	if (state == newState) return;
 
 	state = newState;

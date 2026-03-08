@@ -7,8 +7,8 @@
 
 Ghost::Ghost()
 {
-	hp = 100.f;
-	maxHp = 100.f;
+	hp = 20.f;
+	maxHp = 20.f;
 	moveSpeed = 2.0f;
 	_attackTimer = 0.0f;
 	_wanderTimer = 0.0f;
@@ -28,7 +28,7 @@ void Ghost::Update(float deltaTime)
 	if (_attackTimer > 0.0f) _attackTimer -= deltaTime;
 	if (_wanderTimer > 0.0f) _wanderTimer -= deltaTime;
 
-	PlayerRef target = roomRef->FindNearestPlayer(posX, posY, posZ, 12.0f);
+	PlayerRef target = roomRef->FindNearestPlayer(posX, posY, posZ, 6.0f);
 
 	if (target != nullptr)
 	{
@@ -76,9 +76,10 @@ void Ghost::Update(float deltaTime)
 
 void Ghost::OnDamaged(float damage)
 {
+	if (hp <= 0.0f) return;
 	float angle = (rand() % 360) * (3.141592f / 180.0f);
-	posX += cos(angle) * 4.0f;
-	posZ += sin(angle) * 4.0f;
+	posX += cos(angle) * 2.0f;
+	posZ += sin(angle) * 2.0f;
 
 	RoomRef roomRef = room.lock();
 	if (roomRef != nullptr)

@@ -9,13 +9,13 @@ Golem::Golem()
 	this->maxHp = 100.f;             
 	this->hp = 100.f;
 
-	detectionRange = 12.0f;
+	detectionRange = 5.0f;
 	attackRange = 3.5f;
 
 	chaseSpeed = 3.5f;
 	wanderSpeed = 2.0f;
 
-	wanderRadius = 10.0f;
+	wanderRadius = 5.0f;
 	wanderInterval = 3.0f;
 
 	attackDelay = 2.0f;    

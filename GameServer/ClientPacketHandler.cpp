@@ -48,16 +48,16 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		player->playerId = accountData.accountId;
 		// =======================================================
 		// [테스트용] MainScene 스폰
-		 //player->curRoomID = ROOM::ROOM_1; 
-		 //player->posX = 59.81f + randomOffsetX;
-		 //player->posY = -9.0f;
-		 //player->posZ = -25.58f + randomOffsetZ;
+		 player->curRoomID = ROOM::ROOM_1; 
+		 player->posX = 59.81f + randomOffsetX;
+		 player->posY = -9.0f;
+		 player->posZ = -25.58f + randomOffsetZ;
 
 		// [테스트용] BossScene1 다이렉트 스폰
-		player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
-		player->posX = 1.24f + randomOffsetX;
-		player->posY = 0.0f;
-		player->posZ = 18.83f + randomOffsetZ;
+		//player->curRoomID = ROOM::ROOM_2; // BossScene1 방 번호
+		//player->posX = 1.24f + randomOffsetX;
+		//player->posY = 0.0f;
+		//player->posZ = 18.83f + randomOffsetZ;
 		// =======================================================
 
 		player->rotY = 0.0f;
@@ -325,6 +325,14 @@ bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt)
 			if (player->hp > player->maxHp) player->hp = player->maxHp;
 			player->inventory[slot] = 0;
 			cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << endl;
+
+			S_USE_ITEM usePkt;
+			usePkt.playerId = player->playerId;
+			usePkt.itemId = itemId;
+			usePkt.currentHp = player->hp;
+
+			auto useBuffer = ClientPacketHandler::MakeSendBuffer(usePkt, PKT_S_USE_ITEM);
+			room->Broadcast(useBuffer);
 		}
 
 		S_UPDATE_INVEN invenPkt;
