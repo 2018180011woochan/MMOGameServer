@@ -43,6 +43,11 @@ struct S_MOVE
 	int32 isRunning;
 };
 
+struct C_ENTER_GAME
+{
+	int32 dummy;
+};
+
 struct S_ENTER_GAME
 {
 	int32 playerId;

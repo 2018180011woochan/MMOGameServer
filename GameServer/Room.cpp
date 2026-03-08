@@ -14,7 +14,7 @@ static std::atomic<int32> GGlobalMonsterIdGenerator = 100;
 
 void Room::Enter(PlayerRef player)
 {
-	cout << "Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
+	cout << "[서버 로그] Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
 	WRITE_LOCK;
 	_players[player->playerId] = player;
 
@@ -280,7 +280,7 @@ void Room::SpawnMonster(MonsterType type, float x, float y, float z)
 		}
 	}
 
-	cout << "[서버 스폰] " << monster->monsterId << "번 몬스터(타입:" << type << ") 소환 완료!" << endl;
+	cout << "[서버 로그] " << monster->monsterId << "번 몬스터(타입:" << type << ") 소환 완료!" << endl;
 }
 
 void Room::SpawnRandomGhost()

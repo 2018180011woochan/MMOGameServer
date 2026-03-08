@@ -93,16 +93,38 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 		gameSession->SetPlayer(player);
 		player->ownerSession = gameSession;
 
-		RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
-		if (room != nullptr)
-		{
-			room->Enter(player);
-			cout << "[서버 로그] 로그인 성공! 방 입장 완료. (PlayerID: " << player->playerId << ")" << endl;
-		}
+		//RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+		//if (room != nullptr)
+		//{
+		//	room->Enter(player);
+		//	cout << "[서버 로그] 로그인 성공! 방 입장 완료. (PlayerID: " << player->playerId << ")" << endl;
+		//}
 	}
 	else
 	{
 		cout << "로그인 실패! (DB에 없거나 비밀번호가 틀림)" << endl;
+	}
+
+	return true;
+}
+
+bool Handle_C_ENTER_GAME(PacketSessionRef& session, C_ENTER_GAME* pkt)
+{
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	PlayerRef player = gameSession->GetPlayer();
+
+	if (player == nullptr) return false;
+
+	RoomRef room = RoomManager::Instance().GetRoom(player->curRoomID);
+	if (room != nullptr)
+	{
+		room->Enter(player);
+		cout << "[서버 로그] 클라이언트 로딩 완료(ANY KEY)! 맵 입장 처리 완료. (PlayerID: " << player->playerId << ")" << endl;
+	}
+	else
+	{
+		cout << "[서버 오류] " << player->playerId << "번 유저가 입장할 방을 찾을 수 없습니다!" << endl;
+		return false;
 	}
 
 	return true;
@@ -222,7 +244,7 @@ bool Handle_C_DASH(PacketSessionRef& session, C_DASH* pkt)
 
 bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 {
-	cout << "[서버 수신 로그] 플레이어가 " << pkt->monsterId << "번 몬스터를 공격" << endl;
+	cout << "[서버 로그] 플레이어가 " << pkt->monsterId << "번 몬스터를 공격" << endl;
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 	PlayerRef player = gameSession->GetPlayer();
 	if (player == nullptr) return false;

@@ -7,6 +7,7 @@ extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
 // Custom Handlers
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt);
+bool Handle_C_ENTER_GAME(PacketSessionRef& session, C_ENTER_GAME* pkt);
 bool Handle_C_MOVE(PacketSessionRef& session, C_MOVE* pkt);
 bool Handle_C_STANCE(PacketSessionRef& session, C_STANCE* pkt);
 bool Handle_C_JUMP(PacketSessionRef& session, C_JUMP* pkt);
@@ -26,6 +27,7 @@ public:
 		for (int32 i = 0; i < UINT16_MAX; i++)
 			GPacketHandler[i] = Handle_INVALID;
 		GPacketHandler[PKT_C_LOGIN] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_LOGIN>(Handle_C_LOGIN, session, buffer, len); };
+		GPacketHandler[PKT_C_ENTER_GAME] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_ENTER_GAME>(Handle_C_ENTER_GAME, session, buffer, len); };
 		GPacketHandler[PKT_C_MOVE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_MOVE>(Handle_C_MOVE, session, buffer, len); };
 		GPacketHandler[PKT_C_STANCE] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_STANCE>(Handle_C_STANCE, session, buffer, len); };
 		GPacketHandler[PKT_C_JUMP] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<C_JUMP>(Handle_C_JUMP, session, buffer, len); };
