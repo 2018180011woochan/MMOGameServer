@@ -36,7 +36,7 @@ private:
 	map<int32, MonsterRef> _monsters;
 	map<int32, DroppedItem> _droppedItems;
 
-	std::atomic<int32> _monsterIdGenerator{ 100 };
+	//std::atomic<int32> _monsterIdGenerator{ 100 };
 
 	// ghost
 	int32 ghostSpawnedCount = 0;

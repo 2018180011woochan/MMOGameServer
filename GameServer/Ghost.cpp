@@ -76,7 +76,6 @@ void Ghost::Update(float deltaTime)
 
 void Ghost::OnDamaged(float damage)
 {
-	cout << "[고스트 뇌 로그] 윽! 데미지 " << damage << " 들어옴! 텔레포트 시작할게!" << endl;
 	float angle = (rand() % 360) * (3.141592f / 180.0f);
 	posX += cos(angle) * 4.0f;
 	posZ += sin(angle) * 4.0f;

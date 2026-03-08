@@ -10,6 +10,8 @@
 #include "Ghost.h"
 #include "../Common/Packet/PacketProtocol.h"
 
+static std::atomic<int32> GGlobalMonsterIdGenerator = 100;
+
 void Room::Enter(PlayerRef player)
 {
 	cout << "Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
@@ -250,7 +252,7 @@ void Room::SpawnMonster(MonsterType type, float x, float y, float z)
 
 	if (monster == nullptr) return;
 
-	monster->monsterId = _monsterIdGenerator.fetch_add(1); 
+	monster->monsterId = GGlobalMonsterIdGenerator.fetch_add(1);
 	monster->type = type;
 	monster->posX = x;
 	monster->posY = y;

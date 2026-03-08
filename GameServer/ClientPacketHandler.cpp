@@ -187,7 +187,7 @@ bool Handle_C_ATTACK(PacketSessionRef& session, C_ATTACK* pkt)
 
 	S_ATTACK sPkt;
 	sPkt.playerId = player->playerId;
-	sPkt.attackType = pkt->attackType; 
+	sPkt.attackType = pkt->attackType;
 
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_ATTACK);
 
@@ -222,7 +222,7 @@ bool Handle_C_DASH(PacketSessionRef& session, C_DASH* pkt)
 
 bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 {
-	cout << "[서버 수신 로그] 클라가 " << pkt->monsterId << "번 몬스터를 때렸다는 패킷 도착!" << endl;
+	cout << "[서버 수신 로그] 플레이어가 " << pkt->monsterId << "번 몬스터를 공격" << endl;
 	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
 	PlayerRef player = gameSession->GetPlayer();
 	if (player == nullptr) return false;
@@ -256,13 +256,13 @@ bool Handle_C_HIT_MONSTER(PacketSessionRef& session, C_HIT_MONSTER* pkt)
 		room->SetDropItem(monster->monsterId, item);
 
 		if (monster->type == MonsterType::MONSTER_TYPE_GOLEM) {
-			room->isPortalOpened = true; 
+			room->isPortalOpened = true;
 
 			S_OPEN_PORTAL portalPkt;
 			portalPkt.isOpened = 1;
 			auto portalBuffer = ClientPacketHandler::MakeSendBuffer(portalPkt, PKT_S_OPEN_PORTAL);
 
-			room->Broadcast(portalBuffer); 
+			room->Broadcast(portalBuffer);
 
 			cout << "[서버 로그] 보스 처치 확인! 방의 포탈을 개방합니다." << endl;
 		}
@@ -323,13 +323,13 @@ bool Handle_C_USE_ITEM(PacketSessionRef& session, C_USE_ITEM* pkt)
 		{
 			player->hp += 50.f;
 			if (player->hp > player->maxHp) player->hp = player->maxHp;
-			player->inventory[slot] = 0; 
+			player->inventory[slot] = 0;
 			cout << "[서버 로그] 플레이어 " << player->playerId << "가 포션을 마셨습니다! HP: " << player->hp << endl;
 		}
 
 		S_UPDATE_INVEN invenPkt;
 		invenPkt.slotIndex = slot;
-		invenPkt.itemId = player->inventory[slot]; 
+		invenPkt.itemId = player->inventory[slot];
 
 		auto invenBuffer = ClientPacketHandler::MakeSendBuffer(invenPkt, PKT_S_UPDATE_INVEN);
 		session->Send(invenBuffer);
@@ -356,14 +356,14 @@ bool Handle_C_PICKUP_ITEM(PacketSessionRef& session, C_PICKUP_ITEM* pkt)
 		if (player->inventory[i] == 0)
 		{
 			emptySlotIndex = i;
-			break; 
+			break;
 		}
 	}
 
 	if (emptySlotIndex == -1)
 	{
 		cout << "[서버 로그] " << player->playerId << "번 유저 가방 꽉 참! 루팅 실패!" << endl;
-		return true; 
+		return true;
 	}
 
 	if (GDBManager->InsertInventoryItem(player->playerId, lootedItemId, emptySlotIndex))
@@ -406,8 +406,8 @@ bool Handle_C_ENTER_PORTAL(PacketSessionRef& session, C_ENTER_PORTAL* pkt)
 	int32 currentRoomId = player->curRoomID;
 	int32 nextRoomId = ROOM::ROOM_1;
 
-	if (currentRoomId == ROOM::ROOM_1) nextRoomId = ROOM::ROOM_2; 
-	else if (currentRoomId == ROOM::ROOM_2) nextRoomId = ROOM::ROOM_3; 
+	if (currentRoomId == ROOM::ROOM_1) nextRoomId = ROOM::ROOM_2;
+	else if (currentRoomId == ROOM::ROOM_2) nextRoomId = ROOM::ROOM_3;
 	else return false;
 
 	RoomRef oldRoom = RoomManager::Instance().GetRoom(currentRoomId);
@@ -431,7 +431,7 @@ bool Handle_C_ENTER_PORTAL(PacketSessionRef& session, C_ENTER_PORTAL* pkt)
 		player->posY = 0.0f;
 		player->posZ = 18.83f + randomOffsetZ;
 	}
-	else if (nextRoomId == ROOM::ROOM_3) 
+	else if (nextRoomId == ROOM::ROOM_3)
 	{
 		player->posX = 7.39f + randomOffsetX;
 		player->posY = 0.0f;
