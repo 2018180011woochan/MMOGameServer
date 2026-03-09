@@ -23,8 +23,7 @@ void Monster::Update(float deltaTime)
 
 	stateTimer += deltaTime;
 
-	switch (state)
-	{
+	switch (state) {
 	case STATE_IDLE: ProcessIdle(deltaTime); break;
 	case STATE_WANDER: ProcessWander(deltaTime); break;
 	case STATE_CHASE: ProcessChase(deltaTime); break;
