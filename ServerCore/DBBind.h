@@ -44,10 +44,15 @@ public:
 		_paramFlag |= ( 1LL << idx );
 	}
 
+	//void BindParam(int32 idx, const WCHAR* value)
+	//{
+	//	_dbConnection.BindParam(idx + 1, &value, &_paramIndex[idx]);
+	//	_paramFlag |= ( 1LL << idx );
+	//}
 	void BindParam(int32 idx, const WCHAR* value)
 	{
-		_dbConnection.BindParam(idx + 1, &value, &_paramIndex[idx]);
-		_paramFlag |= ( 1LL << idx );
+		_dbConnection.BindParam(idx + 1, value, &_paramIndex[idx]);
+		_paramFlag |= (1LL << idx);
 	}
 
 	// Ãß°¡

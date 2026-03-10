@@ -155,10 +155,8 @@ void Monster::ChangeState(MONSTER_STATE newState)
 {
 	if (state == STATE_DEAD) return;
 	if (state == newState) return;
-
 	state = newState;
 	stateTimer = 0.0f;
-
 	S_MONSTER_STATE sPkt;
 	sPkt.monsterId = this->monsterId;
 	sPkt.state = this->state;
@@ -166,12 +164,10 @@ void Monster::ChangeState(MONSTER_STATE newState)
 	sPkt.destX = this->destX;
 	sPkt.destY = this->destY;
 	sPkt.destZ = this->destZ;
-
-	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_MONSTER_STATE);
-
+	auto sendBuffer = 
+		ClientPacketHandler::MakeSendBuffer(sPkt, PKT_S_MONSTER_STATE);
 	RoomRef myRoom = room.lock();
-	if (myRoom != nullptr)
-	{
+	if (myRoom != nullptr) {
 		myRoom->Broadcast(sendBuffer);
 	}
 }

@@ -17,19 +17,16 @@ void Room::Enter(PlayerRef player)
 	cout << "[서버 로그] Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
 	WRITE_LOCK;
 	_players[player->playerId] = player;
-
 	S_ENTER_GAME myEnterPkt;
 	myEnterPkt.playerId = player->playerId;
 	myEnterPkt.posX = player->posX;
 	myEnterPkt.posY = player->posY;
 	myEnterPkt.posZ = player->posZ;
 	myEnterPkt.rotY = player->rotY;
-	auto myEnterSendBuffer = ClientPacketHandler::MakeSendBuffer(myEnterPkt, PKT_S_ENTER_GAME);
-
+	auto myEnterSendBuffer =
+		ClientPacketHandler::MakeSendBuffer(myEnterPkt, PKT_S_ENTER_GAME);
 	if (auto mySession = player->ownerSession.lock())
-	{
 		mySession->Send(myEnterSendBuffer);
-	}
 
 	for (auto& pair : _players) {
 		PlayerRef otherPlayer = pair.second;
@@ -129,31 +126,23 @@ void Room::Leave(PlayerRef player)
 {
 	WRITE_LOCK;
 	_players.erase(player->playerId);
-
 	S_LEAVE_GAME leavePkt;
 	leavePkt.playerId = player->playerId;
-	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(leavePkt, PKT_S_LEAVE_GAME);
-
-	for (auto& pair : _players)
-	{
+	auto sendBuffer = 
+		ClientPacketHandler::MakeSendBuffer(leavePkt, PKT_S_LEAVE_GAME);
+	for (auto& pair : _players) {
 		if (auto session = pair.second->ownerSession.lock())
-		{
 			session->Send(sendBuffer);
-		}
 	}
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer)
 {
 	READ_LOCK;
-
-	for (auto& pair : _players)
-	{
+	for (auto& pair : _players) {
 		PlayerRef p = pair.second;
 		if (auto session = p->ownerSession.lock())
-		{
 			session->Send(sendBuffer);
-		}
 	}
 }
 

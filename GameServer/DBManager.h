@@ -24,7 +24,7 @@ public:
 
 public:
 	// 계정
-	bool LoginAccount(const std::string& accountName, const std::string& password, OUT AccountDBData& outAccountData);
+	bool LoginAccount(const std::wstring& accountName, const std::wstring& password, OUT AccountDBData& outAccountData);
 	// 인벤토리
 	bool InsertInventoryItem(int32 accountId, int32 itemId, int32 slotIndex);
 	bool DeleteInventoryItem(int32 accountId, int32 slotIndex);

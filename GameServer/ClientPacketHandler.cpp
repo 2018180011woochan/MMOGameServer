@@ -25,8 +25,11 @@ bool Handle_C_LOGIN(PacketSessionRef& session, C_LOGIN* pkt)
 	cout << "[클라 요청] 로그인 시도 ID: " << pkt->accountName << " / PW: " << pkt->password << endl;
 
 	AccountDBData accountData;
-
-	bool isLoginSuccess = GDBManager->LoginAccount(pkt->accountName, pkt->password, accountData);
+	std::string tempAccount(pkt->accountName);
+	std::string tempPassword(pkt->password);
+	std::wstring wAccountName(tempAccount.begin(), tempAccount.end());
+	std::wstring wPassword(tempPassword.begin(), tempPassword.end());
+	bool isLoginSuccess = GDBManager->LoginAccount(wAccountName, wPassword, accountData);
 
 	S_LOGIN sPkt;
 	sPkt.success = isLoginSuccess ? 1 : 0;
