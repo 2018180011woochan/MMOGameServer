@@ -14,8 +14,7 @@ static std::atomic<int32> GGlobalMonsterIdGenerator = 100;
 
 void Room::Enter(PlayerRef player)
 {
-	cout << "[서버 로그] Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
-	WRITE_LOCK;
+	std::unique_lock<std::shared_mutex> lock(_roomMutex);
 	_players[player->playerId] = player;
 	S_ENTER_GAME myEnterPkt;
 	myEnterPkt.playerId = player->playerId;
@@ -28,6 +27,7 @@ void Room::Enter(PlayerRef player)
 	if (auto mySession = player->ownerSession.lock())
 		mySession->Send(myEnterSendBuffer);
 
+	cout << "[서버 로그] Room::Enter 호출됨! 플레이어 ID: " << player->playerId << endl;
 	for (auto& pair : _players) {
 		PlayerRef otherPlayer = pair.second;
 
@@ -124,7 +124,7 @@ void Room::Enter(PlayerRef player)
 
 void Room::Leave(PlayerRef player)
 {
-	WRITE_LOCK;
+	std::unique_lock<std::shared_mutex> lock(_roomMutex);
 	_players.erase(player->playerId);
 	S_LEAVE_GAME leavePkt;
 	leavePkt.playerId = player->playerId;
@@ -138,7 +138,7 @@ void Room::Leave(PlayerRef player)
 
 void Room::Broadcast(SendBufferRef sendBuffer)
 {
-	READ_LOCK;
+	std::shared_lock<std::shared_mutex> lock(_roomMutex);
 	for (auto& pair : _players) {
 		PlayerRef p = pair.second;
 		if (auto session = p->ownerSession.lock())
@@ -148,7 +148,7 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 
 void Room::EnterMonster(MonsterRef monster)
 {
-	WRITE_LOCK;
+	std::unique_lock<std::shared_mutex> lock(_roomMutex);
 	_monsters[monster->monsterId] = monster;
 	monster->roomId = 1;
 	monster->room = shared_from_this();
@@ -156,13 +156,13 @@ void Room::EnterMonster(MonsterRef monster)
 
 void Room::LeaveMonster(int32 monsterId)
 {
-	WRITE_LOCK;
+	std::unique_lock<std::shared_mutex> lock(_roomMutex);
 	_monsters.erase(monsterId);
 }
 
 void Room::Update(float deltaTime)
 {
-	WRITE_LOCK;
+	std::unique_lock<std::shared_mutex> lock(_roomMutex);
 
 	if (_players.empty()) return;
 
@@ -185,7 +185,7 @@ void Room::Update(float deltaTime)
 
 MonsterRef Room::GetMonster(int32 monsterId)
 {
-	READ_LOCK; 
+	std::shared_lock<std::shared_mutex> lock(_roomMutex);
 
 	auto it = _monsters.find(monsterId);
 	if (it != _monsters.end())
@@ -198,7 +198,7 @@ MonsterRef Room::GetMonster(int32 monsterId)
 
 PlayerRef Room::GetPlayer(uint64 playerId)
 {
-	READ_LOCK;
+	std::shared_lock<std::shared_mutex> lock(_roomMutex);
 	auto it = _players.find(playerId);
 	if (it != _players.end()) return it->second;
 	return nullptr;
@@ -206,7 +206,7 @@ PlayerRef Room::GetPlayer(uint64 playerId)
 
 PlayerRef Room::FindNearestPlayer(float x, float y, float z, float range)
 {
-	READ_LOCK;
+	std::shared_lock<std::shared_mutex> lock(_roomMutex);
 	PlayerRef nearestPlayer = nullptr;
 	float minDistance = range; 
 
@@ -231,7 +231,7 @@ PlayerRef Room::FindNearestPlayer(float x, float y, float z, float range)
 
 void Room::SpawnMonster(MonsterType type, float x, float y, float z)
 {
-	WRITE_LOCK;
+	std::unique_lock<std::shared_mutex> lock(_roomMutex);
 
 	MonsterRef monster = nullptr;
 	if (type == MONSTER_TYPE_SKELETON) monster = make_shared<Skeleton>();

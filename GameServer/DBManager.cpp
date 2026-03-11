@@ -19,7 +19,6 @@ bool DBManager::LoginAccount(const std::wstring& accountName, const std::wstring
 			isSuccess = true;
 		}
 	}
-
 	GDBConnectionPool->Push(dbcon);
 	return isSuccess;
 }

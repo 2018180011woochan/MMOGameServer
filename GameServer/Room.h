@@ -31,7 +31,7 @@ public:
 	void SpawnMonster(MonsterType type, float x, float y, float z);
 	void SpawnRandomGhost();
 private:
-	USE_LOCK;
+	std::shared_mutex _roomMutex;
 	map<uint64, PlayerRef> _players;
 	map<int32, MonsterRef> _monsters;
 	map<int32, DroppedItem> _droppedItems;

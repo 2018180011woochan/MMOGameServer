@@ -17,7 +17,7 @@ public:
 	void Update(float deltaTime);
 
 private:
-	USE_LOCK;
+	std::shared_mutex _managerMutex;
 	map<uint16, RoomRef> _rooms;
 };
 
